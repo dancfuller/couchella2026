@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Coachella 2026 — Sunday</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  height: 100%;
+  background: #0d0d0d;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px 16px;
+  gap: 14px;
+}
+.top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 2px solid #2a2a2a;
+  padding-bottom: 14px;
+  flex-shrink: 0;
+}
+.title { font-size: 28px; font-weight: 500; color: #f0ece4; }
+.right { display: flex; align-items: center; gap: 20px; }
+.meta { font-size: 14px; color: #666; }
+.back {
+  font-size: 13px; color: #888; text-decoration: none;
+  border: 0.5px solid #444; padding: 5px 12px; border-radius: 6px;
+}
+.back:hover { color: #ccc; border-color: #666; }
+select.tz-pick {
+  background: #141414;
+  border: 0.5px solid #333;
+  color: #777;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  font-family: inherit;
+}
+select.tz-pick:hover { border-color: #555; color: #bbb; }
+.grid-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 14px;
+  min-height: 0;
+}
+.row-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+.col {
+  background: #161616;
+  border-radius: 10px;
+  border: 0.5px solid #252525;
+  padding: 14px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.col-head {
+  font-size: 17px;
+  font-weight: 500;
+  color: #d4c9b8;
+  padding-bottom: 9px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #2a2a2a;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.acts {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-evenly;
+  min-height: 0;
+}
+.act {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  border-bottom: 0.5px solid #1e1e1e;
+  padding: 3px 0;
+}
+.act:last-child { border-bottom: none; }
+.t {
+  font-size: 14px;
+  color: #d4a017;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 70px;
+}
+.n { font-size: 14px; color: #ccc; line-height: 1.3; }
+.col[data-href] { cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.col[data-href]:hover { border-color: #3a3a3a; background: #1c1c1c; }
+.now-playing .n { color: #f0ece4; font-weight: 500; }
+.now-playing .n::before { content: '● '; font-size: 8px; color: #4ade80; vertical-align: middle; }
+.now-playing .t { color: #4ade80; }
+.next-up .n::before { content: '● '; font-size: 8px; color: #f59e0b; vertical-align: middle; }
+@keyframes blink { 50% { opacity: 0; } }
+.clk-colon { animation: blink 1s step-end infinite; }
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="title">Coachella 2026 &mdash; <span style="color:#a07cd0">Sunday, April 12, 2026</span></span>
+  <div class="right">
+    <span class="meta">Schedule: EDT</span>
+    <select class="tz-pick" id="tz-pick" onchange="saveTZ(this.value)">
+      <option value="America/New_York">Eastern (EDT)</option>
+      <option value="America/Chicago">Central (CDT)</option>
+      <option value="America/Denver">Mountain (MDT)</option>
+      <option value="America/Los_Angeles">Pacific (PDT)</option>
+      <option value="Europe/London">London (BST)</option>
+      <option value="Europe/Paris">Paris (CEST)</option>
+      <option value="Asia/Tokyo">Tokyo (JST)</option>
+      <option value="Australia/Sydney">Sydney (AEST)</option>
+    </select>
+    <a class="back" href="index.html">&larr; All days</a>
+  </div>
+</div>
+<div class="grid-wrap">
+  <div class="row-grid"><div class="col" data-href="https://www.youtube.com/watch?v=2NA7XUw51oo"><div class="col-head">Coachella Stage</div><div class="acts"><div class="act"><span class="t">7:00 PM</span><span class="n">Tijuana Panthers</span></div>
+<div class="act"><span class="t">7:45 PM</span><span class="n">Wet Leg</span></div>
+<div class="act"><span class="t">9:10 PM</span><span class="n">Major Lazer</span></div>
+<div class="act"><span class="t">10:50 PM</span><span class="n">Young Thug</span></div>
+<div class="act"><span class="t">12:55 AM</span><span class="n">Karol G</span></div></div></div>
+<div class="col" data-href="https://www.youtube.com/watch?v=MdUBm8G41ZU"><div class="col-head">Outdoor Theatre</div><div class="acts"><div class="act"><span class="t">7:00 PM</span><span class="n">Gigi Perez</span></div>
+<div class="act"><span class="t">8:15 PM</span><span class="n">Clipse</span></div>
+<div class="act"><span class="t">9:45 PM</span><span class="n">Foster the People</span></div>
+<div class="act"><span class="t">11:40 PM</span><span class="n">Laufey</span></div>
+<div class="act"><span class="t">1:30 AM</span><span class="n">Bigbang</span></div></div></div>
+<div class="col" data-href="https://www.youtube.com/watch?v=NlrpPqb0vwo"><div class="col-head">Sahara</div><div class="acts"><div class="act"><span class="t">7:00 PM</span><span class="n">Girl Math (Vnssa x Nala)</span></div>
+<div class="act"><span class="t">8:05 PM</span><span class="n">Bunt.</span></div>
+<div class="act"><span class="t">9:10 PM</span><span class="n">Duke Dumont</span></div>
+<div class="act"><span class="t">10:25 PM</span><span class="n">Mochakk</span></div>
+<div class="act"><span class="t">12:05 AM</span><span class="n">Subtronics</span></div>
+<div class="act"><span class="t">1:45 AM</span><span class="n">Kaskade</span></div></div></div>
+<div class="col" data-href="https://www.youtube.com/watch?v=HJVG2Ck3uuk"><div class="col-head">Mojave</div><div class="acts"><div class="act"><span class="t">7:25 PM</span><span class="n">Little Simz</span></div>
+<div class="act"><span class="t">8:35 PM</span><span class="n">Suicidal Tendencies</span></div>
+<div class="act"><span class="t">9:30 PM</span><span class="n">Samia</span></div>
+<div class="act"><span class="t">10:10 PM</span><span class="n">Iggy Pop</span></div>
+<div class="act"><span class="t">11:45 PM</span><span class="n">FKA Twigs</span></div></div></div></div>
+  <div class="row-grid"><div class="col" data-href="https://www.youtube.com/watch?v=4C5p1tdRv6c"><div class="col-head">Gobi</div><div class="acts"><div class="act"><span class="t">7:05 PM</span><span class="n">Cobrah</span></div>
+<div class="act"><span class="t">8:15 PM</span><span class="n">Oklou</span></div>
+<div class="act"><span class="t">9:30 PM</span><span class="n">Black Flag</span></div>
+<div class="act"><span class="t">10:10 PM</span><span class="n">Flowerovlove</span></div>
+<div class="act"><span class="t">10:45 PM</span><span class="n">Tomora</span></div>
+<div class="act"><span class="t">12:05 AM</span><span class="n">The Rapture</span></div>
+<div class="act"><span class="t">1:00 AM</span><span class="n">The Chats</span></div></div></div>
+<div class="col" data-href="https://youtu.be/OGNPnQViI3g"><div class="col-head">Sonora</div><div class="acts"><div class="act"><span class="t">7:00 PM</span><span class="n">Model/Actriz</span></div>
+<div class="act"><span class="t">7:45 PM</span><span class="n">Jane Remover</span></div>
+<div class="act"><span class="t">8:30 PM</span><span class="n">Los Retros</span></div>
+<div class="act"><span class="t">9:40 PM</span><span class="n">RØZ</span></div>
+<div class="act"><span class="t">11:00 PM</span><span class="n">Drain</span></div>
+<div class="act"><span class="t">12:10 AM</span><span class="n">French Police</span></div>
+<div class="act"><span class="t">1:15 AM</span><span class="n">Glitterer</span></div></div></div>
+<div class="col" data-href="https://www.youtube.com/watch?v=1KANGsDaRvw"><div class="col-head">Quasar</div><div class="acts"><div class="act"><span class="t">7:00 PM</span><span class="n">Jazzy</span></div>
+<div class="act"><span class="t">9:00 PM</span><span class="n">Joy (Anonymous)</span></div>
+<div class="act"><span class="t">11:00 PM</span><span class="n">Fatboy Slim</span></div></div></div>
+<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span></div></div></div></div>
+<script>
+(function(){
+  function pad(n){return n<10?'0'+n:n;}
+  function getTZ(){return localStorage.getItem('tz')||'America/New_York';}
+  window.saveTZ=function(tz){localStorage.setItem('tz',tz);};
+  function tick(){
+    var d=new Date();
+    var nd=new Date(d.toLocaleString('en-US',{timeZone:getTZ()}));
+    var h=nd.getHours(),m=nd.getMinutes();
+    h=h%12||12;
+    document.getElementById('clk-h').textContent=h;
+    document.getElementById('clk-m').textContent=pad(m);
+  }
+  tick();setInterval(tick,1000);
+  var p=document.getElementById('tz-pick');if(p)p.value=getTZ();
+})();
+</script>
+<script>
+(function(){
+  function norm(h,m){if(h<7)h+=24;return h*60+m;}
+  function edtNow(){
+    var d=new Date();
+    try{var s=d.toLocaleString('en-US',{timeZone:'America/New_York'});var nd=new Date(s);return norm(nd.getHours(),nd.getMinutes());}
+    catch(e){return norm(d.getHours(),d.getMinutes());}
+  }
+  function parseT(s){
+    var m=s.trim().match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if(!m)return null;
+    var h=+m[1],mn=+m[2],ap=m[3].toUpperCase();
+    if(ap==='PM'&&h!==12)h+=12;
+    if(ap==='AM'&&h===12)h=0;
+    return norm(h,mn);
+  }
+  var END=norm(4,30),BUF=10;
+  function update(){
+    var now=edtNow();
+    document.querySelectorAll('.col').forEach(function(col){
+      var acts=col.querySelectorAll('.act');
+      acts.forEach(function(act,i){
+        var tEl=act.querySelector('.t');
+        if(!tEl)return;
+        var start=parseT(tEl.textContent);
+        if(start===null)return;
+        var next=acts[i+1];
+        var nextStart=next?parseT(next.querySelector('.t').textContent):END;
+        var setEnd=nextStart-BUF;
+        act.classList.remove('now-playing','next-up');
+        if(now>=start&&now<setEnd){act.classList.add('now-playing');}
+        else if(now>=start-BUF&&now<start){act.classList.add('next-up');}
+      });
+    });
+  }
+  update();
+  setInterval(update,30000);
+  document.querySelectorAll('.col[data-href]').forEach(function(col){
+    col.addEventListener('click',function(){window.open(col.dataset.href,'_blank','noopener');});
+  });
+})();
+</script>
+</div>
+</body>
+</html>

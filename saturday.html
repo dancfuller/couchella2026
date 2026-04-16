@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Coachella 2026 — Saturday</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -113,6 +114,124 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
 .next-up .n::before { content: '● '; font-size: 8px; color: #f59e0b; vertical-align: middle; }
 @keyframes blink { 50% { opacity: 0; } }
 .clk-colon { animation: blink 1s step-end infinite; }
+
+/* ── Mobile ──────────────────────────────────── */
+.mob-outer { display: none; }
+
+@media (max-width: 768px) {
+  body { padding: 14px 16px 12px; gap: 10px; }
+  .grid-wrap { display: none; }
+  .mob-outer { display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 10px; }
+
+  .top { flex-wrap: wrap; align-items: center; gap: 8px; padding-bottom: 10px; border-bottom-width: 1px; }
+  .title { font-size: 18px; flex: 1 1 100%; }
+  .meta { display: none; }
+  .right { gap: 10px; }
+
+  .stage-nav {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+  }
+  .stage-nav::-webkit-scrollbar { display: none; }
+
+  .snav-btn {
+    background: transparent;
+    border: 1px solid #252525;
+    color: #555;
+    font-size: 12px;
+    font-family: inherit;
+    padding: 7px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .snav-btn.active { border-color: #b0a898; color: #f0ece4; background: rgba(240,236,228,.07); }
+  .snav-btn.has-live::after {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    background: #4ade80;
+    border-radius: 50%;
+    margin-left: 5px;
+    vertical-align: middle;
+    position: relative; top: -1px;
+  }
+
+  .stage-view { flex: 1; min-height: 0; }
+
+  .mob-panel {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #161616;
+    border-radius: 10px;
+    border: 0.5px solid #252525;
+    padding: 14px;
+  }
+  .mob-panel.mob-active { display: flex; }
+
+  .mob-panel .col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+  }
+  .mob-stream {
+    font-size: 11px;
+    color: #555;
+    text-decoration: none;
+    border: 0.5px solid #333;
+    padding: 3px 9px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-left: 10px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .mob-stream:hover { color: #999; border-color: #555; }
+
+  .mob-panel .acts { justify-content: flex-start; flex: 0 0 auto; }
+  .mob-panel .act { padding: 10px 0; }
+  .mob-panel .t { font-size: 14px; min-width: 76px; }
+  .mob-panel .n { font-size: 15px; }
+
+  .mob-panel .now-playing {
+    background: rgba(74,222,128,.05);
+    border-left: 2px solid rgba(74,222,128,.4);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 8px 10px 10px;
+    margin: 0 -8px 0 -14px;
+  }
+  .mob-panel .now-playing .t { color: #4ade80; }
+  .mob-panel .now-playing .n { color: #f0ece4; font-weight: 500; }
+
+  .mob-clk {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 10px 0 4px;
+    border-top: 1px solid #1e1e1e;
+  }
+  .mob-clk-time {
+    font-size: 80px;
+    color: #f0ece4;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+}
 </style>
 </head>
 <body>
@@ -134,6 +253,7 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
   </div>
 </div>
 <div class="grid-wrap" id="gw"></div>
+<div class="mob-outer" id="mob"></div>
 <script>
 (function(){
   function getTZ(){return localStorage.getItem('tz')||'America/New_York';}
@@ -170,27 +290,72 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
   document.getElementById('day-title').textContent=DATES[W];
 
   function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  var stages=STAGES[W];
+
+  // ── Desktop render ────────────────────────────────────
   function renderStage(s){
     var acts=s.acts.map(function(a){return '<div class="act"><span class="t">'+esc(a[0])+'</span><span class="n">'+esc(a[1])+'</span></div>';}).join('');
     var attr=s.href?' data-href="'+s.href+'"':'';
     return '<div class="col"'+attr+'><div class="col-head">'+esc(s.stage)+'</div><div class="acts">'+acts+'</div></div>';
   }
   var clkCol='<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span></div></div></div>';
-  var stages=STAGES[W];
   document.getElementById('gw').innerHTML=
     '<div class="row-grid">'+stages.slice(0,4).map(renderStage).join('')+'</div>'+
     '<div class="row-grid">'+stages.slice(4).map(renderStage).join('')+clkCol+'</div>';
 
+  // ── Mobile render ─────────────────────────────────────
+  var ABBREV={'Coachella Stage':'Coachella','Outdoor Theatre':'Outdoor'};
+  var mobIdx=0;
+  function goTo(idx){
+    mobIdx=idx;
+    document.querySelectorAll('.snav-btn').forEach(function(b){b.classList.toggle('active',+b.dataset.idx===idx);});
+    document.querySelectorAll('.mob-panel').forEach(function(p){p.classList.toggle('mob-active',+p.dataset.idx===idx);});
+    var ab=document.querySelector('.snav-btn[data-idx="'+idx+'"]');
+    if(ab)ab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  }
+  (function(){
+    var nav=stages.map(function(s,i){
+      return '<button class="snav-btn'+(i===0?' active':'')+'" data-idx="'+i+'">'+esc(ABBREV[s.stage]||s.stage)+'</button>';
+    }).join('');
+    var panels=stages.map(function(s,i){
+      var acts=s.acts.map(function(a){return '<div class="act"><span class="t">'+esc(a[0])+'</span><span class="n">'+esc(a[1])+'</span></div>';}).join('');
+      var watch=s.href?'<a class="mob-stream" href="'+s.href+'" target="_blank" rel="noopener">&#9654; Watch</a>':'';
+      return '<div class="mob-panel'+(i===0?' mob-active':'')+'" data-idx="'+i+'">'+
+             '<div class="col-head"><span>'+esc(s.stage)+'</span>'+watch+'</div>'+
+             '<div class="acts">'+acts+'</div></div>';
+    }).join('');
+    document.getElementById('mob').innerHTML=
+      '<div class="stage-nav">'+nav+'</div>'+
+      '<div class="stage-view" id="sview">'+panels+'</div>'+
+      '<div class="mob-clk"><div class="mob-clk-time"><span id="mob-clk-h"></span><span class="clk-colon">:</span><span id="mob-clk-m"></span></div></div>';
+    document.querySelectorAll('.snav-btn').forEach(function(b){
+      b.addEventListener('click',function(){goTo(+b.dataset.idx);});
+    });
+    var tx=0,sv=document.getElementById('sview');
+    sv.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
+    sv.addEventListener('touchend',function(e){
+      var dx=e.changedTouches[0].clientX-tx;
+      if(Math.abs(dx)>50){
+        if(dx<0&&mobIdx<stages.length-1)goTo(mobIdx+1);
+        else if(dx>0&&mobIdx>0)goTo(mobIdx-1);
+      }
+    },{passive:true});
+  })();
+
+  // ── Clock (desktop only) ──────────────────────────────
   function pad(n){return n<10?'0'+n:n;}
   function tick(){
     var d=new Date(),nd=new Date(d.toLocaleString('en-US',{timeZone:getTZ()}));
-    var h=nd.getHours()%12||12;
-    document.getElementById('clk-h').textContent=h;
-    document.getElementById('clk-m').textContent=pad(nd.getMinutes());
+    var h=nd.getHours()%12||12,m=pad(nd.getMinutes());
+    var dH=document.getElementById('clk-h');
+    if(dH){dH.textContent=h;document.getElementById('clk-m').textContent=m;}
+    var mH=document.getElementById('mob-clk-h');
+    if(mH){mH.textContent=h;document.getElementById('mob-clk-m').textContent=m;}
   }
   tick();setInterval(tick,1000);
   document.getElementById('tz-pick').value=getTZ();
 
+  // ── Now-playing ───────────────────────────────────────
   function norm(h,m){if(h<7)h+=24;return h*60+m;}
   function edtNow(){
     var d=new Date();
@@ -208,7 +373,7 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
   var END=norm(4,30),BUF=10;
   function update(){
     var now=edtNow();
-    document.querySelectorAll('.col').forEach(function(col){
+    document.querySelectorAll('.col, .mob-panel').forEach(function(col){
       var acts=col.querySelectorAll('.act');
       acts.forEach(function(act,i){
         var tEl=act.querySelector('.t');
@@ -221,6 +386,11 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
         if(now>=start&&now<nextStart-BUF){act.classList.add('now-playing');}
         else if(now>=start-BUF&&now<start){act.classList.add('next-up');}
       });
+    });
+    // Live dot on stage tabs
+    document.querySelectorAll('.snav-btn').forEach(function(btn){
+      var panel=document.querySelector('.mob-panel[data-idx="'+btn.dataset.idx+'"]');
+      btn.classList.toggle('has-live',panel&&!!panel.querySelector('.now-playing'));
     });
   }
   update();setInterval(update,30000);

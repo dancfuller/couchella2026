@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Coachella 2026</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -57,6 +58,16 @@ h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; }
 .fri { color: #5fad8c; border-color: #5fad8c; background: rgba(95,173,140,.08); }
 .sat { color: #5591cc; border-color: #5591cc; background: rgba(85,145,204,.08); }
 .sun { color: #a07cd0; border-color: #a07cd0; background: rgba(160,124,208,.08); }
+
+@media (max-width: 600px) {
+  h1 { font-size: 22px; }
+  .sub { font-size: 13px; margin-bottom: 28px; }
+  .weekends { flex-direction: column; gap: 10px; align-items: stretch; margin-bottom: 28px; }
+  .wbtn { padding: 14px 20px; font-size: 15px; }
+  .days { flex-direction: column; gap: 12px; align-items: stretch; }
+  .btn { padding: 22px 28px; font-size: 22px; }
+  .btn .d { font-size: 13px; }
+}
 </style>
 </head>
 <body>

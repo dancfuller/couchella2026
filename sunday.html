@@ -32,20 +32,27 @@ body {
   border: 0.5px solid #444; padding: 6px 16px; border-radius: 6px;
 }
 .back:hover { color: #ccc; border-color: #666; }
-select.tz-pick {
-  background: #141414;
-  border: 0.5px solid #333;
-  color: #777;
-  font-size: 18px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-  font-family: inherit;
+.tz-wrap { position: relative; display: inline-block; }
+.tz-btn {
+  background: none; border: none; font-family: inherit; font-size: 22px;
+  color: #888; cursor: pointer; padding: 0;
+  text-decoration: underline; text-decoration-color: #3a3a3a; text-underline-offset: 3px;
+  transition: color 0.15s;
 }
-select.tz-pick:hover { border-color: #555; color: #bbb; }
+.tz-btn:hover { color: #ccc; }
+.tz-drop {
+  display: none; position: absolute; right: 0; top: calc(100% + 8px);
+  background: #1a1a1a; border: 0.5px solid #333; border-radius: 8px;
+  padding: 4px 0; z-index: 100; min-width: 160px;
+}
+.tz-drop.open { display: block; }
+.tz-opt {
+  display: block; width: 100%; background: none; border: none;
+  color: #666; font-family: inherit; font-size: 17px;
+  padding: 9px 16px; text-align: left; cursor: pointer; white-space: nowrap;
+}
+.tz-opt:hover { color: #f0ece4; background: rgba(255,255,255,.04); }
+.tz-opt.selected { color: #ccc; }
 .grid-wrap {
   display: flex;
   flex-direction: column;
@@ -238,26 +245,32 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
 <div class="top">
   <span class="title">Coachella 2026 &mdash; <span id="day-title" style="color:#a07cd0">Sunday</span></span>
   <div class="right">
-    <span class="meta">Schedule: EDT</span>
-    <select class="tz-pick" id="tz-pick" onchange="saveTZ(this.value)">
-      <option value="America/New_York">Eastern (EDT)</option>
-      <option value="America/Chicago">Central (CDT)</option>
-      <option value="America/Denver">Mountain (MDT)</option>
-      <option value="America/Los_Angeles">Pacific (PDT)</option>
-      <option value="Europe/London">London (BST)</option>
-      <option value="Europe/Paris">Paris (CEST)</option>
-      <option value="Asia/Tokyo">Tokyo (JST)</option>
-      <option value="Australia/Sydney">Sydney (AEST)</option>
-    </select>
-    <a class="back" href="index.html">&larr; All days</a>
+    <span class="meta">Schedule: <span class="tz-wrap"><button class="tz-btn" id="tz-btn" onclick="toggleTZDrop(event)"><span id="tz-abbr">EDT</span></button><div class="tz-drop" id="tz-drop"><button class="tz-opt" data-tz="America/New_York" onclick="selectTZ('America/New_York')">Eastern</button><button class="tz-opt" data-tz="America/Chicago" onclick="selectTZ('America/Chicago')">Central</button><button class="tz-opt" data-tz="America/Denver" onclick="selectTZ('America/Denver')">Mountain</button><button class="tz-opt" data-tz="America/Los_Angeles" onclick="selectTZ('America/Los_Angeles')">Pacific</button><button class="tz-opt" data-tz="Europe/London" onclick="selectTZ('Europe/London')">London</button><button class="tz-opt" data-tz="Europe/Paris" onclick="selectTZ('Europe/Paris')">Paris</button><button class="tz-opt" data-tz="Asia/Tokyo" onclick="selectTZ('Asia/Tokyo')">Tokyo</button><button class="tz-opt" data-tz="Australia/Sydney" onclick="selectTZ('Australia/Sydney')">Sydney</button></div></span></span>
+    <a class="back" href="index.html">Day Picker</a>
   </div>
 </div>
 <div class="grid-wrap" id="gw"></div>
 <div class="mob-outer" id="mob"></div>
 <script>
 (function(){
-  function getTZ(){return localStorage.getItem('tz')||'America/New_York';}
-  window.saveTZ=function(tz){localStorage.setItem('tz',tz);};
+  var SUPPORTED_TZ=['America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Asia/Tokyo','Australia/Sydney'];
+  function getTZ(){
+    var s=localStorage.getItem('tz');
+    if(s&&SUPPORTED_TZ.indexOf(s)!==-1)return s;
+    try{var b=Intl.DateTimeFormat().resolvedOptions().timeZone;if(SUPPORTED_TZ.indexOf(b)!==-1)return b;}catch(e){}
+    return'America/New_York';
+  }
+  function getTZAbbr(tz){
+    try{return new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'short'}).formatToParts(new Date()).find(function(p){return p.type==='timeZoneName';}).value;}catch(e){return'EDT';}
+  }
+  function updateTZLabel(tz){
+    var el=document.getElementById('tz-abbr');if(el)el.textContent=getTZAbbr(tz);
+    document.querySelectorAll('.tz-opt').forEach(function(o){o.classList.toggle('selected',o.dataset.tz===tz);});
+  }
+  window.saveTZ=function(tz){localStorage.setItem('tz',tz);updateTZLabel(tz);};
+  window.toggleTZDrop=function(e){e.stopPropagation();var d=document.getElementById('tz-drop');if(d)d.classList.toggle('open');};
+  window.selectTZ=function(tz){saveTZ(tz);var d=document.getElementById('tz-drop');if(d)d.classList.remove('open');};
+  document.addEventListener('click',function(){var d=document.getElementById('tz-drop');if(d)d.classList.remove('open');});
 
   var urlW=new URLSearchParams(location.search).get('w');
   var W=urlW?+urlW:(parseInt(localStorage.getItem('weekend')||'1'));
@@ -354,7 +367,7 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
     if(mH){mH.textContent=h;document.getElementById('mob-clk-m').textContent=m;}
   }
   tick();setInterval(tick,1000);
-  document.getElementById('tz-pick').value=getTZ();
+  updateTZLabel(getTZ());
 
   // ── Now-playing ───────────────────────────────────────
   function norm(h,m){if(h<7)h+=24;return h*60+m;}

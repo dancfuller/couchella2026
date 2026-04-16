@@ -52,7 +52,7 @@ h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; disp
 <div class="main">
   <div class="wrap">
     <h1><img src="coachella-logo.svg" alt="Coachella" class="logo-img"> 2026 &mdash; Livestream</h1>
-    <div class="sub" id="sub">All times Eastern (EDT) &nbsp;&middot;&nbsp; April 10&ndash;12, 2026</div>
+    <div class="sub" id="sub">April 10&ndash;12, 2026</div>
     <div class="weekends">
       <button class="wbtn active" id="w1btn" onclick="setWeekend(1)">Weekend 1<span class="wd">Apr 10&ndash;12</span></button>
       <button class="wbtn" id="w2btn" onclick="setWeekend(2)">Weekend 2<span class="wd">Apr 17&ndash;19</span></button>
@@ -79,7 +79,7 @@ function setWeekend(n) {
     el.href = p[1][0];
     el.querySelector('.d').textContent = p[1][1];
   });
-  document.getElementById('sub').innerHTML = 'All times Eastern (EDT) &nbsp;&middot;&nbsp; ' + w.sub;
+  document.getElementById('sub').innerHTML = w.sub;
 }
 (function() {
   var saved = localStorage.getItem('weekend');

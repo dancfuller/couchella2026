@@ -276,7 +276,7 @@ body {
     var el=document.getElementById('tz-abbr');if(el)el.textContent=getTZAbbr(tz);
     document.querySelectorAll('.tz-opt').forEach(function(o){o.classList.toggle('selected',o.dataset.tz===tz);});
   }
-  window.saveTZ=function(tz){localStorage.setItem('tz',tz);updateTZLabel(tz);};
+  window.saveTZ=function(tz){localStorage.setItem('tz',tz);updateTZLabel(tz);updateTimes(tz);};
   window.toggleTZDrop=function(e){e.stopPropagation();var d=document.getElementById('tz-drop');if(d)d.classList.toggle('open');};
   window.selectTZ=function(tz){saveTZ(tz);var d=document.getElementById('tz-drop');if(d)d.classList.remove('open');};
   document.addEventListener('click',function(){var d=document.getElementById('tz-drop');if(d)d.classList.remove('open');});
@@ -320,7 +320,13 @@ body {
 
   // ── Desktop render ────────────────────────────────────
   function renderStage(s){
-    var acts=s.acts.map(function(a){return '<div class="act"><span class="t">'+esc(a[0])+'</span><span class="n">'+esc(a[1])+'</span></div>';}).join('');
+    var tz=getTZ(),sd=SHOW_DATES[W];
+    var acts=s.acts.map(function(a){
+      var utc=edtStringToUTC(a[0],sd);
+      var disp=utc?formatActTime(utc,tz):esc(a[0]);
+      var attrs=utc?' data-utc="'+utc+'" data-edt="'+esc(a[0])+'"':'';
+      return '<div class="act"><span class="t"'+attrs+'>'+disp+'</span><span class="n">'+esc(a[1])+'</span></div>';
+    }).join('');
     var attr=s.href?' data-href="'+s.href+'"':'';
     return '<div class="col"'+attr+'><div class="col-head">'+esc(s.stage)+'</div><div class="acts">'+acts+'</div></div>';
   }
@@ -344,7 +350,12 @@ body {
       return '<button class="snav-btn'+(i===0?' active':'')+'" data-idx="'+i+'">'+esc(ABBREV[s.stage]||s.stage)+'</button>';
     }).join('');
     var panels=stages.map(function(s,i){
-      var acts=s.acts.map(function(a){return '<div class="act"><span class="t">'+esc(a[0])+'</span><span class="n">'+esc(a[1])+'</span></div>';}).join('');
+      var acts=s.acts.map(function(a){
+        var utc=edtStringToUTC(a[0],SHOW_DATES[W]);
+        var disp=utc?formatActTime(utc,getTZ()):esc(a[0]);
+        var attrs=utc?' data-utc="'+utc+'" data-edt="'+esc(a[0])+'"':'';
+        return '<div class="act"><span class="t"'+attrs+'>'+disp+'</span><span class="n">'+esc(a[1])+'</span></div>';
+      }).join('');
       var watch=s.href?'<a class="mob-stream" href="'+s.href+'" target="_blank" rel="noopener">&#9654; Watch</a>':'';
       return '<div class="mob-panel'+(i===0?' mob-active':'')+'" data-idx="'+i+'">'+
              '<div class="col-head"><span>'+esc(s.stage)+'</span>'+watch+'</div>'+
@@ -370,6 +381,20 @@ body {
 
   // ── Clock (desktop only — phone has its own clock) ───
   function pad(n){return n<10?'0'+n:n;}
+  function edtStringToUTC(timeStr,showDate){
+    var m=timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);if(!m)return null;
+    var h=+m[1],mn=+m[2],ap=m[3].toUpperCase();
+    if(ap==='PM'&&h!==12)h+=12;if(ap==='AM'&&h===12)h=0;
+    var base=new Date(showDate+'T04:00:00Z').getTime();
+    if(h<7)h+=24;
+    return base+(h*60+mn)*60000;
+  }
+  function formatActTime(utcMs,tz){
+    return new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true}).format(new Date(utcMs));
+  }
+  function updateTimes(tz){
+    document.querySelectorAll('.t[data-utc]').forEach(function(el){el.textContent=formatActTime(+el.dataset.utc,tz);});
+  }
   function tick(){
     var d=new Date(),nd=new Date(d.toLocaleString('en-US',{timeZone:getTZ()}));
     var h=nd.getHours()%12||12,m=pad(nd.getMinutes());
@@ -419,10 +444,10 @@ body {
       acts.forEach(function(act,i){
         var tEl=act.querySelector('.t');
         if(!tEl)return;
-        var start=parseT(tEl.textContent);
+        var start=parseT(tEl.dataset.edt||tEl.textContent);
         if(start===null)return;
         var next=acts[i+1];
-        var nextStart=next?parseT(next.querySelector('.t').textContent):END;
+        var nextStart=next?parseT(next.querySelector('.t').dataset.edt||next.querySelector('.t').textContent):END;
         act.classList.remove('now-playing','next-up');
         if(now>=start&&now<nextStart-BUF){act.classList.add('now-playing');}
         else if(now>=start-BUF&&now<start){act.classList.add('next-up');}

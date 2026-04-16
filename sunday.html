@@ -32,6 +32,13 @@ body {
   border: 0.5px solid #444; padding: 6px 16px; border-radius: 6px;
 }
 .back:hover { color: #ccc; border-color: #666; }
+.disclaimer {
+  display: none;
+  color: #f87171;
+  font-size: 15px;
+  flex-shrink: 0;
+  padding: 2px 0 4px;
+}
 .tz-wrap { position: relative; display: inline-block; }
 .tz-btn {
   background: none; border: none; font-family: inherit; font-size: 22px;
@@ -249,6 +256,7 @@ body {
     <a class="back" href="index.html">Day Picker</a>
   </div>
 </div>
+<div id="disclaimer" class="disclaimer">YouTube links and exact setlistings subject to change until livestreams start.</div>
 <div class="grid-wrap" id="gw"></div>
 <div class="mob-outer" id="mob"></div>
 <script>
@@ -275,6 +283,9 @@ body {
   var urlW=new URLSearchParams(location.search).get('w');
   var W=urlW?+urlW:(parseInt(localStorage.getItem('weekend')||'1'));
   if(W!==1&&W!==2)W=1;
+
+  var DISC_CUTOFF={1:new Date('2026-04-10T23:00:00Z'),2:new Date('2026-04-17T23:00:00Z')};
+  if(new Date()<DISC_CUTOFF[W]){var _d=document.getElementById('disclaimer');if(_d)_d.style.display='block';}
 
   // Schedule data — edit Weekend 2 entries below where the lineup differs from Weekend 1
   var STAGES={

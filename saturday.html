@@ -117,7 +117,7 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
 </head>
 <body>
 <div class="top">
-  <span class="title">Coachella 2026 &mdash; <span style="color:#5591cc">Saturday, April 11, 2026</span></span>
+  <span class="title">Coachella 2026 &mdash; <span id="day-title" style="color:#5591cc">Saturday</span></span>
   <div class="right">
     <span class="meta">Schedule: EDT</span>
     <select class="tz-pick" id="tz-pick" onchange="saveTZ(this.value)">
@@ -133,67 +133,64 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
     <a class="back" href="index.html">&larr; All days</a>
   </div>
 </div>
-<div class="grid-wrap">
-  <div class="row-grid"><div class="col" data-href="https://www.youtube.com/watch?v=2NA7XUw51oo"><div class="col-head">Coachella Stage</div><div class="acts"><div class="act"><span class="t">8:30 PM</span><span class="n">Addison Rae</span></div>
-<div class="act"><span class="t">10:00 PM</span><span class="n">Giveon</span></div>
-<div class="act"><span class="t">12:00 AM</span><span class="n">The Strokes</span></div>
-<div class="act"><span class="t">2:25 AM</span><span class="n">Justin Bieber</span></div></div></div>
-<div class="col" data-href="https://www.youtube.com/watch?v=MdUBm8G41ZU"><div class="col-head">Outdoor Theatre</div><div class="acts"><div class="act"><span class="t">7:00 PM</span><span class="n">Los Hermanos Flores</span></div>
-<div class="act"><span class="t">8:10 PM</span><span class="n">Alex G</span></div>
-<div class="act"><span class="t">9:10 PM</span><span class="n">Blondshell</span></div>
-<div class="act"><span class="t">10:05 PM</span><span class="n">Sombr</span></div>
-<div class="act"><span class="t">11:30 PM</span><span class="n">Labrinth</span></div>
-<div class="act"><span class="t">1:20 AM</span><span class="n">David Byrne</span></div></div></div>
-<div class="col" data-href="https://www.youtube.com/watch?v=NlrpPqb0vwo"><div class="col-head">Sahara</div><div class="acts"><div class="act"><span class="t">7:00 PM</span><span class="n">Zulan</span></div>
-<div class="act"><span class="t">8:00 PM</span><span class="n">Hamdi</span></div>
-<div class="act"><span class="t">9:15 PM</span><span class="n">¥ØU$UK€ ¥UK1MAT$U</span></div>
-<div class="act"><span class="t">10:15 PM</span><span class="n">TEED</span></div>
-<div class="act"><span class="t">11:00 PM</span><span class="n">Nine Inch Noize</span></div>
-<div class="act"><span class="t">12:10 AM</span><span class="n">Rezz</span></div>
-<div class="act"><span class="t">1:30 AM</span><span class="n">Adriatique</span></div>
-<div class="act"><span class="t">2:55 AM</span><span class="n">Worship</span></div></div></div>
-<div class="col" data-href="https://www.youtube.com/watch?v=HJVG2Ck3uuk"><div class="col-head">Mojave</div><div class="acts"><div class="act"><span class="t">7:00 PM</span><span class="n">Jack White</span></div>
-<div class="act"><span class="t">7:50 PM</span><span class="n">Fujii Kaze</span></div>
-<div class="act"><span class="t">8:50 PM</span><span class="n">Royel Otis</span></div>
-<div class="act"><span class="t">10:30 PM</span><span class="n">Taemin</span></div>
-<div class="act"><span class="t">11:55 PM</span><span class="n">PinkPantheress</span></div>
-<div class="act"><span class="t">1:15 AM</span><span class="n">Interpol</span></div></div></div></div>
-  <div class="row-grid"><div class="col" data-href="https://www.youtube.com/watch?v=4C5p1tdRv6c"><div class="col-head">Gobi</div><div class="acts"><div class="act"><span class="t">7:05 PM</span><span class="n">Whatmore</span></div>
-<div class="act"><span class="t">8:10 PM</span><span class="n">Luísa Sonza</span></div>
-<div class="act"><span class="t">9:15 PM</span><span class="n">Geese</span></div>
-<div class="act"><span class="t">10:05 PM</span><span class="n">Noga Erez</span></div>
-<div class="act"><span class="t">10:50 PM</span><span class="n">Davido</span></div>
-<div class="act"><span class="t">12:00 AM</span><span class="n">BIA</span></div>
-<div class="act"><span class="t">1:10 AM</span><span class="n">Morat</span></div></div></div>
-<div class="col" data-href="https://youtu.be/OGNPnQViI3g"><div class="col-head">Sonora</div><div class="acts"><div class="act"><span class="t">7:20 PM</span><span class="n">Ecca Vandal</span></div>
-<div class="act"><span class="t">8:30 PM</span><span class="n">Ceremony</span></div>
-<div class="act"><span class="t">9:40 PM</span><span class="n">Rusowsky</span></div>
-<div class="act"><span class="t">10:50 PM</span><span class="n">54 Ultra</span></div>
-<div class="act"><span class="t">11:45 PM</span><span class="n">Die Spitz</span></div>
-<div class="act"><span class="t">12:45 AM</span><span class="n">Mind Enterprises</span></div>
-<div class="act"><span class="t">1:45 AM</span><span class="n">Freak Slug</span></div></div></div>
-<div class="col" data-href="https://www.youtube.com/watch?v=1KANGsDaRvw"><div class="col-head">Quasar</div><div class="acts"><div class="act"><span class="t">8:00 PM</span><span class="n">Joezi</span></div>
-<div class="act"><span class="t">10:00 PM</span><span class="n">Afrojack x Shimza</span></div></div></div>
-<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span></div></div></div></div>
+<div class="grid-wrap" id="gw"></div>
 <script>
 (function(){
-  function pad(n){return n<10?'0'+n:n;}
   function getTZ(){return localStorage.getItem('tz')||'America/New_York';}
   window.saveTZ=function(tz){localStorage.setItem('tz',tz);};
+
+  var urlW=new URLSearchParams(location.search).get('w');
+  var W=urlW?+urlW:(parseInt(localStorage.getItem('weekend')||'1'));
+  if(W!==1&&W!==2)W=1;
+
+  // Schedule data — edit Weekend 2 entries below where the lineup differs from Weekend 1
+  var STAGES={
+    1:[
+      {stage:'Coachella Stage',href:'https://www.youtube.com/watch?v=2NA7XUw51oo',acts:[['8:30 PM','Addison Rae'],['10:00 PM','Giveon'],['12:00 AM','The Strokes'],['2:25 AM','Justin Bieber']]},
+      {stage:'Outdoor Theatre',href:'https://www.youtube.com/watch?v=MdUBm8G41ZU',acts:[['7:00 PM','Los Hermanos Flores'],['8:10 PM','Alex G'],['9:10 PM','Blondshell'],['10:05 PM','Sombr'],['11:30 PM','Labrinth'],['1:20 AM','David Byrne']]},
+      {stage:'Sahara',href:'https://www.youtube.com/watch?v=NlrpPqb0vwo',acts:[['7:00 PM','Zulan'],['8:00 PM','Hamdi'],['9:15 PM','¥ØU$UK€ ¥UK1MAT$U'],['10:15 PM','TEED'],['11:00 PM','Nine Inch Noize'],['12:10 AM','Rezz'],['1:30 AM','Adriatique'],['2:55 AM','Worship']]},
+      {stage:'Mojave',href:'https://www.youtube.com/watch?v=HJVG2Ck3uuk',acts:[['7:00 PM','Jack White'],['7:50 PM','Fujii Kaze'],['8:50 PM','Royel Otis'],['10:30 PM','Taemin'],['11:55 PM','PinkPantheress'],['1:15 AM','Interpol']]},
+      {stage:'Gobi',href:'https://www.youtube.com/watch?v=4C5p1tdRv6c',acts:[['7:05 PM','Whatmore'],['8:10 PM','Luísa Sonza'],['9:15 PM','Geese'],['10:05 PM','Noga Erez'],['10:50 PM','Davido'],['12:00 AM','BIA'],['1:10 AM','Morat']]},
+      {stage:'Sonora',href:'https://youtu.be/OGNPnQViI3g',acts:[['7:20 PM','Ecca Vandal'],['8:30 PM','Ceremony'],['9:40 PM','Rusowsky'],['10:50 PM','54 Ultra'],['11:45 PM','Die Spitz'],['12:45 AM','Mind Enterprises'],['1:45 AM','Freak Slug']]},
+      {stage:'Quasar',href:'https://www.youtube.com/watch?v=1KANGsDaRvw',acts:[['8:00 PM','Joezi'],['10:00 PM','Afrojack x Shimza']]}
+    ],
+    2:[
+      // Weekend 2 — update acts where lineup differs from Weekend 1
+      {stage:'Coachella Stage',href:'https://www.youtube.com/watch?v=2NA7XUw51oo',acts:[['8:30 PM','Addison Rae'],['10:00 PM','Giveon'],['12:00 AM','The Strokes'],['2:25 AM','Justin Bieber']]},
+      {stage:'Outdoor Theatre',href:'https://www.youtube.com/watch?v=MdUBm8G41ZU',acts:[['7:00 PM','Los Hermanos Flores'],['8:10 PM','Alex G'],['9:10 PM','Blondshell'],['10:05 PM','Sombr'],['11:30 PM','Labrinth'],['1:20 AM','David Byrne']]},
+      {stage:'Sahara',href:'https://www.youtube.com/watch?v=NlrpPqb0vwo',acts:[['7:00 PM','Zulan'],['8:00 PM','Hamdi'],['9:15 PM','¥ØU$UK€ ¥UK1MAT$U'],['10:15 PM','TEED'],['11:00 PM','Nine Inch Noize'],['12:10 AM','Rezz'],['1:30 AM','Adriatique'],['2:55 AM','Worship']]},
+      {stage:'Mojave',href:'https://www.youtube.com/watch?v=HJVG2Ck3uuk',acts:[['7:00 PM','Jack White'],['7:50 PM','Fujii Kaze'],['8:50 PM','Royel Otis'],['10:30 PM','Taemin'],['11:55 PM','PinkPantheress'],['1:15 AM','Interpol']]},
+      {stage:'Gobi',href:'https://www.youtube.com/watch?v=4C5p1tdRv6c',acts:[['7:05 PM','Whatmore'],['8:10 PM','Luísa Sonza'],['9:15 PM','Geese'],['10:05 PM','Noga Erez'],['10:50 PM','Davido'],['12:00 AM','BIA'],['1:10 AM','Morat']]},
+      {stage:'Sonora',href:'https://youtu.be/OGNPnQViI3g',acts:[['7:20 PM','Ecca Vandal'],['8:30 PM','Ceremony'],['9:40 PM','Rusowsky'],['10:50 PM','54 Ultra'],['11:45 PM','Die Spitz'],['12:45 AM','Mind Enterprises'],['1:45 AM','Freak Slug']]},
+      {stage:'Quasar',href:'https://www.youtube.com/watch?v=1KANGsDaRvw',acts:[['8:00 PM','Joezi'],['10:00 PM','Afrojack x Shimza']]}
+    ]
+  };
+
+  var DATES={1:'Saturday, April 11, 2026',2:'Saturday, April 18, 2026'};
+  document.getElementById('day-title').textContent=DATES[W];
+
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function renderStage(s){
+    var acts=s.acts.map(function(a){return '<div class="act"><span class="t">'+esc(a[0])+'</span><span class="n">'+esc(a[1])+'</span></div>';}).join('');
+    var attr=s.href?' data-href="'+s.href+'"':'';
+    return '<div class="col"'+attr+'><div class="col-head">'+esc(s.stage)+'</div><div class="acts">'+acts+'</div></div>';
+  }
+  var clkCol='<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span></div></div></div>';
+  var stages=STAGES[W];
+  document.getElementById('gw').innerHTML=
+    '<div class="row-grid">'+stages.slice(0,4).map(renderStage).join('')+'</div>'+
+    '<div class="row-grid">'+stages.slice(4).map(renderStage).join('')+clkCol+'</div>';
+
+  function pad(n){return n<10?'0'+n:n;}
   function tick(){
-    var d=new Date();
-    var nd=new Date(d.toLocaleString('en-US',{timeZone:getTZ()}));
-    var h=nd.getHours(),m=nd.getMinutes();
-    h=h%12||12;
+    var d=new Date(),nd=new Date(d.toLocaleString('en-US',{timeZone:getTZ()}));
+    var h=nd.getHours()%12||12;
     document.getElementById('clk-h').textContent=h;
-    document.getElementById('clk-m').textContent=pad(m);
+    document.getElementById('clk-m').textContent=pad(nd.getMinutes());
   }
   tick();setInterval(tick,1000);
-  var p=document.getElementById('tz-pick');if(p)p.value=getTZ();
-})();
-</script>
-<script>
-(function(){
+  document.getElementById('tz-pick').value=getTZ();
+
   function norm(h,m){if(h<7)h+=24;return h*60+m;}
   function edtNow(){
     var d=new Date();
@@ -220,20 +217,17 @@ select.tz-pick:hover { border-color: #555; color: #bbb; }
         if(start===null)return;
         var next=acts[i+1];
         var nextStart=next?parseT(next.querySelector('.t').textContent):END;
-        var setEnd=nextStart-BUF;
         act.classList.remove('now-playing','next-up');
-        if(now>=start&&now<setEnd){act.classList.add('now-playing');}
+        if(now>=start&&now<nextStart-BUF){act.classList.add('now-playing');}
         else if(now>=start-BUF&&now<start){act.classList.add('next-up');}
       });
     });
   }
-  update();
-  setInterval(update,30000);
+  update();setInterval(update,30000);
   document.querySelectorAll('.col[data-href]').forEach(function(col){
     col.addEventListener('click',function(){window.open(col.dataset.href,'_blank','noopener');});
   });
 })();
 </script>
-</div>
 </body>
 </html>

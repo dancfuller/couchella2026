@@ -10,7 +10,8 @@ html, body { height: 100%; background: #0d0d0d; font-family: Arial, Helvetica, s
 body { display: flex; flex-direction: column; }
 .main { flex: 1; display: flex; align-items: center; justify-content: center; }
 .wrap { text-align: center; }
-h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; }
+h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.logo-img { height: 0.75em; vertical-align: middle; filter: invert(1); display: inline-block; }
 .sub { font-size: 15px; color: #666; margin-bottom: 36px; }
 .weekends { display: flex; gap: 16px; justify-content: center; margin-bottom: 36px; }
 .wbtn {
@@ -50,7 +51,7 @@ h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; }
 <body>
 <div class="main">
   <div class="wrap">
-    <h1>Coachella 2026 &mdash; Livestream</h1>
+    <h1><img src="coachella-logo.svg" alt="Coachella" class="logo-img"> 2026 &mdash; Livestream</h1>
     <div class="sub" id="sub">All times Eastern (EDT) &nbsp;&middot;&nbsp; April 10&ndash;12, 2026</div>
     <div class="weekends">
       <button class="wbtn active" id="w1btn" onclick="setWeekend(1)">Weekend 1<span class="wd">Apr 10&ndash;12</span></button>

@@ -25,6 +25,7 @@ body {
   flex-shrink: 0;
 }
 .title { font-size: 60px; font-weight: 500; color: #f0ece4; }
+.logo-img { height: 0.72em; vertical-align: middle; filter: invert(1); display: inline-block; position: relative; top: -0.03em; }
 .right { display: flex; align-items: center; gap: 20px; }
 .meta { font-size: 22px; color: #666; }
 .tz-group { display: inline-flex; align-items: center; }
@@ -252,7 +253,7 @@ body {
 </head>
 <body>
 <div class="top">
-  <span class="title">Coachella 2026 &mdash; <span id="day-title" style="color:#a07cd0">Sunday</span></span>
+  <span class="title"><img src="coachella-logo.svg" alt="Coachella" class="logo-img"> 2026 &mdash; <span id="day-title" style="color:#a07cd0">Sunday</span></span>
   <div class="right">
     <span class="tz-group"><span class="meta">Schedule: </span><span class="tz-wrap"><button class="tz-btn" id="tz-btn" onclick="toggleTZDrop(event)"><span id="tz-abbr">EDT</span></button><div class="tz-drop" id="tz-drop"><button class="tz-opt" data-tz="America/New_York" onclick="selectTZ('America/New_York')">Eastern</button><button class="tz-opt" data-tz="America/Chicago" onclick="selectTZ('America/Chicago')">Central</button><button class="tz-opt" data-tz="America/Denver" onclick="selectTZ('America/Denver')">Mountain</button><button class="tz-opt" data-tz="America/Los_Angeles" onclick="selectTZ('America/Los_Angeles')">Pacific</button><button class="tz-opt" data-tz="Europe/London" onclick="selectTZ('Europe/London')">London</button><button class="tz-opt" data-tz="Europe/Paris" onclick="selectTZ('Europe/Paris')">Paris</button><button class="tz-opt" data-tz="Asia/Tokyo" onclick="selectTZ('Asia/Tokyo')">Tokyo</button><button class="tz-opt" data-tz="Australia/Sydney" onclick="selectTZ('Australia/Sydney')">Sydney</button></div></span></span>
     <a class="back" href="index.html">Day Picker</a>

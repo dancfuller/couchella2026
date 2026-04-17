@@ -486,7 +486,7 @@ body {
     if(ap==='AM'&&h===12)h=0;
     return norm(h,mn);
   }
-  var END=norm(4,30),BUF=10;
+  var END=norm(4,0),PLAY_BUF=20,NEXT_BUF=10;
   function update(){
     if(!isShowDay()){
       document.querySelectorAll('.col .act,.mob-panel .act').forEach(function(a){a.classList.remove('now-playing','next-up');});
@@ -504,8 +504,8 @@ body {
         var next=acts[i+1];
         var nextStart=next?parseT(next.querySelector('.t').dataset.edt||next.querySelector('.t').textContent):END;
         act.classList.remove('now-playing','next-up');
-        if(now>=start&&now<nextStart-BUF){act.classList.add('now-playing');}
-        else if(now>=start-BUF&&now<start){act.classList.add('next-up');}
+        if(now>=start&&now<nextStart-PLAY_BUF){act.classList.add('now-playing');}
+        else if(now>=start-NEXT_BUF&&now<start){act.classList.add('next-up');}
       });
     });
     // Live dot on stage tabs

@@ -87,9 +87,16 @@ body {
   margin-bottom: 10px;
   border-bottom: 1px solid #2a2a2a;
   flex-shrink: 0;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.col-head-name {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 .acts {
   display: flex;
@@ -123,6 +130,19 @@ body {
 .next-up .n::before { content: '● '; font-size: 8px; color: #f59e0b; vertical-align: middle; }
 @keyframes blink { 50% { opacity: 0; } }
 .clk-colon { animation: blink 1s step-end infinite; }
+.mob-stream {
+  font-size: 14px;
+  color: #888;
+  text-decoration: none;
+  border: 1px solid #ef4444;
+  padding: 3px 9px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.mob-stream:hover { color: #ccc; border-color: #f87171; }
+.play-tri { color: #ef4444; }
 
 /* ── Mobile ──────────────────────────────────── */
 .mob-outer { display: none; }
@@ -201,20 +221,6 @@ body {
     margin-bottom: 2px;
     flex-shrink: 0;
   }
-  .mob-stream {
-    font-size: 14px;
-    color: #888;
-    text-decoration: none;
-    border: 1px solid #ef4444;
-    padding: 3px 9px;
-    border-radius: 4px;
-    flex-shrink: 0;
-    margin-left: 10px;
-    transition: color 0.15s, border-color 0.15s;
-  }
-  .mob-stream:hover { color: #ccc; border-color: #f87171; }
-  .play-tri { color: #ef4444; }
-
   .mob-panel .acts { justify-content: flex-start; flex: 0 0 auto; }
   .mob-panel .act { padding: 6px 0; }
   .mob-panel .t { font-size: 22px; min-width: 96px; }
@@ -291,6 +297,7 @@ body {
   .row-grid { gap: 6px; }
   .col { padding: 6px 8px 4px; border-radius: 6px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .col-head { font-size: 12px; padding-bottom: 3px; margin-bottom: 2px; }
+  .mob-stream { font-size: 10px; padding: 2px 5px; margin-left: 4px; border-radius: 3px; }
   .act { gap: 5px; padding: 1px 0; }
   .t { font-size: 11px; min-width: 56px; }
   .n { font-size: 11px; }
@@ -373,8 +380,9 @@ body {
       var attrs=utc?' data-utc="'+utc+'" data-edt="'+esc(a[0])+'"':'';
       return '<div class="act"><span class="t"'+attrs+'>'+disp+'</span><span class="n">'+esc(a[1])+'</span></div>';
     }).join('');
+    var watch=s.href?'<a class="mob-stream" href="'+s.href+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="play-tri">&#9654;</span> Watch</a>':'';
     var attr=s.href?' data-href="'+s.href+'"':'';
-    return '<div class="col"'+attr+'><div class="col-head">'+esc(s.stage)+'</div><div class="acts">'+acts+'</div></div>';
+    return '<div class="col"'+attr+'><div class="col-head"><span class="col-head-name">'+esc(s.stage)+'</span>'+watch+'</div><div class="acts">'+acts+'</div></div>';
   }
   var clkCol='<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="display:inline-flex;align-items:center;font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-0.03em;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span><div id="clk-ampm" class="clk-ampm"><span class="clk-ap clk-am">AM</span><span class="clk-ap clk-pm">PM</span></div></div></div></div>';
   document.getElementById('gw').innerHTML=

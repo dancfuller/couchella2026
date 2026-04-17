@@ -203,16 +203,17 @@ body {
   }
   .mob-stream {
     font-size: 14px;
-    color: #555;
+    color: #888;
     text-decoration: none;
-    border: 0.5px solid #333;
+    border: 1px solid #ef4444;
     padding: 3px 9px;
     border-radius: 4px;
     flex-shrink: 0;
     margin-left: 10px;
     transition: color 0.15s, border-color 0.15s;
   }
-  .mob-stream:hover { color: #999; border-color: #555; }
+  .mob-stream:hover { color: #ccc; border-color: #f87171; }
+  .play-tri { color: #ef4444; }
 
   .mob-panel .acts { justify-content: flex-start; flex: 0 0 auto; }
   .mob-panel .act { padding: 6px 0; }
@@ -375,7 +376,7 @@ body {
         var attrs=utc?' data-utc="'+utc+'" data-edt="'+esc(a[0])+'"':'';
         return '<div class="act"><span class="t"'+attrs+'>'+disp+'</span><span class="n">'+esc(a[1])+'</span></div>';
       }).join('');
-      var watch=s.href?'<a class="mob-stream" href="'+s.href+'" target="_blank" rel="noopener">&#9654; Watch</a>':'';
+      var watch=s.href?'<a class="mob-stream" href="'+s.href+'" target="_blank" rel="noopener"><span class="play-tri">&#9654;</span> Watch</a>':'';
       return '<div class="mob-panel'+(i===0?' mob-active':'')+'" data-idx="'+i+'">'+
              '<div class="col-head"><span>'+esc(s.stage)+'</span>'+watch+'</div>'+
              '<div class="acts">'+acts+'</div></div>';

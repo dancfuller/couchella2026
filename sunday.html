@@ -248,24 +248,25 @@ body {
 }
 .clk-ampm {
   position: relative;
-  height: 1em;
-  width: 0.6em;
+  height: 0.716em;
+  width: 0.65em;
   align-self: center;
   flex-shrink: 0;
   margin-left: 6px;
+  overflow: hidden;
 }
 .clk-ap {
   position: absolute;
   left: 0;
   font-size: 0.5em;
-  line-height: 1;
+  line-height: 0.716;
   letter-spacing: 0;
   font-variant-numeric: normal;
   font-weight: 600;
   transition: color 0.35s;
 }
 .clk-am { top: 0; color: #f0ece4; }
-.clk-pm { bottom: 0; color: #252525; }
+.clk-pm { top: 50%; color: #252525; }
 .clk-ampm.is-pm .clk-am { color: #252525; }
 .clk-ampm.is-pm .clk-pm { color: #f0ece4; }
 </style>

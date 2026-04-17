@@ -247,26 +247,28 @@ body {
   }
 }
 .clk-ampm {
-  position: relative;
   height: 0.716em;
-  width: 0.65em;
+  width: 0.85em;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   align-self: center;
   flex-shrink: 0;
-  margin-left: 6px;
-  overflow: hidden;
+  margin-left: 8px;
 }
 .clk-ap {
-  position: absolute;
-  left: 0;
-  font-size: 0.5em;
+  flex: 1 1 0;
+  min-height: 0;
+  font-size: 0.48em;
   line-height: 0.716;
   letter-spacing: 0;
   font-variant-numeric: normal;
-  font-weight: 600;
+  font-weight: 700;
   transition: color 0.35s;
 }
-.clk-am { top: 0; color: #f0ece4; }
-.clk-pm { top: 50%; color: #252525; }
+.clk-am { color: #f0ece4; }
+.clk-pm { color: #252525; }
 .clk-ampm.is-pm .clk-am { color: #252525; }
 .clk-ampm.is-pm .clk-pm { color: #f0ece4; }
 </style>

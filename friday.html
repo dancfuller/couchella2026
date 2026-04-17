@@ -278,7 +278,7 @@ body {
 <div class="top">
   <span class="title"><img src="coachella-logo.svg" alt="Coachella" class="logo-img"> 2026 &mdash; <span id="day-title" style="color:#5fad8c">Friday</span></span>
   <div class="right">
-    <span class="tz-group"><span class="meta">Schedule: </span><span class="tz-wrap"><button class="tz-btn" id="tz-btn" onclick="toggleTZDrop(event)"><span id="tz-abbr">EDT</span></button><div class="tz-drop" id="tz-drop"><button class="tz-opt" data-tz="America/New_York" onclick="selectTZ('America/New_York')">Eastern</button><button class="tz-opt" data-tz="America/Chicago" onclick="selectTZ('America/Chicago')">Central</button><button class="tz-opt" data-tz="America/Denver" onclick="selectTZ('America/Denver')">Mountain</button><button class="tz-opt" data-tz="America/Los_Angeles" onclick="selectTZ('America/Los_Angeles')">Pacific</button><button class="tz-opt" data-tz="Europe/London" onclick="selectTZ('Europe/London')">London</button><button class="tz-opt" data-tz="Europe/Paris" onclick="selectTZ('Europe/Paris')">Paris</button><button class="tz-opt" data-tz="Asia/Tokyo" onclick="selectTZ('Asia/Tokyo')">Tokyo</button><button class="tz-opt" data-tz="Australia/Sydney" onclick="selectTZ('Australia/Sydney')">Sydney</button></div></span></span>
+    <span class="tz-group"><span class="meta">Schedule: </span><span class="tz-wrap"><button class="tz-btn" id="tz-btn" onclick="toggleTZDrop(event)"><span id="tz-abbr">EDT</span></button><div class="tz-drop" id="tz-drop"><button class="tz-opt" data-tz="America/New_York" onclick="selectTZ('America/New_York')">Eastern</button><button class="tz-opt" data-tz="America/Chicago" onclick="selectTZ('America/Chicago')">Central</button><button class="tz-opt" data-tz="America/Denver" onclick="selectTZ('America/Denver')">Mountain</button><button class="tz-opt" data-tz="America/Los_Angeles" onclick="selectTZ('America/Los_Angeles')">Pacific</button><button class="tz-opt" data-tz="Europe/London" onclick="selectTZ('Europe/London')">London</button><button class="tz-opt" data-tz="Europe/Paris" onclick="selectTZ('Europe/Paris')">Paris</button><button class="tz-opt" data-tz="Asia/Kuala_Lumpur" onclick="selectTZ('Asia/Kuala_Lumpur')">Kuala Lumpur</button><button class="tz-opt" data-tz="Asia/Tokyo" onclick="selectTZ('Asia/Tokyo')">Tokyo</button><button class="tz-opt" data-tz="Australia/Sydney" onclick="selectTZ('Australia/Sydney')">Sydney</button></div></span></span>
     <a class="back" href="index.html">Day Picker</a>
   </div>
 </div>
@@ -286,7 +286,7 @@ body {
 <div class="mob-outer" id="mob"></div>
 <script>
 (function(){
-  var SUPPORTED_TZ=['America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Asia/Tokyo','Australia/Sydney'];
+  var SUPPORTED_TZ=['America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Asia/Kuala_Lumpur','Asia/Tokyo','Australia/Sydney'];
   function getTZ(){
     var s=localStorage.getItem('tz');
     if(s&&SUPPORTED_TZ.indexOf(s)!==-1)return s;

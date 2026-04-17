@@ -272,6 +272,32 @@ body {
 .clk-pm { color: #252525; }
 .clk-ampm.is-pm .clk-am { color: #252525; }
 .clk-ampm.is-pm .clk-pm { color: #f0ece4; }
+
+/* ── Mobile landscape: billboard ────────────────── */
+@media (orientation: landscape) and (max-height: 500px) {
+  body { padding: 6px 10px; gap: 6px; }
+  .grid-wrap { display: flex !important; }
+  .mob-outer { display: none !important; }
+
+  .top { padding-bottom: 5px; border-bottom-width: 1px; flex-wrap: nowrap; align-items: center; gap: 8px; }
+  .title { font-size: 16px; }
+  .meta { display: none; }
+  .right { gap: 8px; }
+  .back { font-size: 12px; padding: 3px 8px; }
+  .tz-btn { font-size: 13px; }
+  .tz-opt { font-size: 13px; padding: 6px 12px; }
+
+  .grid-wrap { gap: 6px; }
+  .row-grid { gap: 6px; }
+  .col { padding: 7px 8px 5px; border-radius: 6px; }
+  .col-head { font-size: 13px; padding-bottom: 4px; margin-bottom: 3px; }
+  .act { gap: 6px; padding: 2px 0; }
+  .t { font-size: 11px; min-width: 56px; }
+  .n { font-size: 11px; }
+  .now-playing .n::before, .next-up .n::before { font-size: 5px; }
+
+  #clk { font-size: 44px !important; }
+}
 </style>
 </head>
 <body>

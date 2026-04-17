@@ -247,7 +247,29 @@ body {
     color: #f0ece4;
     font-variant-numeric: tabular-nums;
     line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  .clk-ampm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 7px;
+    gap: 2px;
+  }
+  .clk-ap {
+    font-size: 22px;
+    line-height: 1.1;
+    letter-spacing: 0.07em;
+    font-variant-numeric: normal;
+    font-weight: 500;
+    transition: color 0.35s;
+  }
+  .clk-am { color: #f0ece4; }
+  .clk-pm { color: #252525; }
+  .clk-ampm.is-pm .clk-am { color: #252525; }
+  .clk-ampm.is-pm .clk-pm { color: #f0ece4; }
 }
 </style>
 </head>
@@ -293,7 +315,7 @@ body {
   // Schedule data — edit Weekend 2 entries below where the lineup differs from Weekend 1
   var STAGES={
     1:[
-      {stage:'Coachella Stage',href:'https://www.youtube.com/watch?v=2NA7XUw51oo',acts:[['7:00 PM','Tijuana Panthers'],['7:45 PM','Wet Leg'],['9:10 PM','Major Lazer'],['10:50 PM','Young Thug'],['12:55 AM','Karol G']]},
+      {stage:'Main Stage',href:'https://www.youtube.com/watch?v=2NA7XUw51oo',acts:[['7:00 PM','Tijuana Panthers'],['7:45 PM','Wet Leg'],['9:10 PM','Major Lazer'],['10:50 PM','Young Thug'],['12:55 AM','Karol G']]},
       {stage:'Outdoor Theatre',href:'https://www.youtube.com/watch?v=MdUBm8G41ZU',acts:[['7:00 PM','Gigi Perez'],['8:15 PM','Clipse'],['9:45 PM','Foster the People'],['11:40 PM','Laufey'],['1:30 AM','Bigbang']]},
       {stage:'Sahara',href:'https://www.youtube.com/watch?v=NlrpPqb0vwo',acts:[['7:00 PM','Girl Math (Vnssa x Nala)'],['8:05 PM','Bunt.'],['9:10 PM','Duke Dumont'],['10:25 PM','Mochakk'],['12:05 AM','Subtronics'],['1:45 AM','Kaskade']]},
       {stage:'Mojave',href:'https://www.youtube.com/watch?v=HJVG2Ck3uuk',acts:[['7:25 PM','Little Simz'],['8:35 PM','Suicidal Tendencies'],['9:30 PM','Samia'],['10:10 PM','Iggy Pop'],['11:45 PM','FKA Twigs']]},
@@ -302,7 +324,7 @@ body {
       {stage:'Quasar',href:'https://www.youtube.com/watch?v=1KANGsDaRvw',acts:[['7:00 PM','Jazzy'],['9:00 PM','Joy (Anonymous)'],['11:00 PM','Fatboy Slim']]}
     ],
     2:[
-      {stage:'Coachella Stage',href:'',acts:[['7:00 PM','Tijuana Panthers'],['7:45 PM','Wet Leg'],['9:10 PM','Major Lazer'],['10:50 PM','Young Thug'],['1:10 AM','Karol G']]},
+      {stage:'Main Stage',href:'',acts:[['7:00 PM','Tijuana Panthers'],['7:45 PM','Wet Leg'],['9:10 PM','Major Lazer'],['10:50 PM','Young Thug'],['1:10 AM','Karol G']]},
       {stage:'Outdoor Theatre',href:'',acts:[['7:00 PM','Gigi Perez'],['8:15 PM','Clipse'],['9:45 PM','Foster the People'],['11:45 PM','Laufey'],['1:30 AM','Bigbang']]},
       {stage:'Sahara',href:'',acts:[['7:00 PM','Girl Math (Vnssa x Nala)'],['8:05 PM','Bunt.'],['9:10 PM','Duke Dumont'],['10:25 PM','Mochakk'],['12:05 AM','Subtronics'],['1:50 AM','Kaskade']]},
       {stage:'Mojave',href:'',acts:[['7:25 PM','Little Simz'],['8:35 PM','Suicidal Tendencies'],['9:30 PM','Samia'],['10:10 PM','Iggy Pop'],['11:45 PM','FKA Twigs']]},
@@ -331,13 +353,13 @@ body {
     var attr=s.href?' data-href="'+s.href+'"':'';
     return '<div class="col"'+attr+'><div class="col-head">'+esc(s.stage)+'</div><div class="acts">'+acts+'</div></div>';
   }
-  var clkCol='<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span></div></div></div>';
+  var clkCol='<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="display:inline-flex;align-items:center;font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span><div id="clk-ampm" class="clk-ampm" style="margin-left:10px;gap:3px;"><span class="clk-ap clk-am" style="font-size:26px;">AM</span><span class="clk-ap clk-pm" style="font-size:26px;">PM</span></div></div></div></div>';
   document.getElementById('gw').innerHTML=
     '<div class="row-grid">'+stages.slice(0,4).map(renderStage).join('')+'</div>'+
     '<div class="row-grid">'+stages.slice(4).map(renderStage).join('')+clkCol+'</div>';
 
   // ── Mobile render ─────────────────────────────────────
-  var ABBREV={'Coachella Stage':'Coachella','Outdoor Theatre':'Outdoor'};
+  var ABBREV={'Main Stage':'Main','Outdoor Theatre':'Outdoor'};
   var mobIdx=0;
   function goTo(idx){
     mobIdx=idx;
@@ -365,7 +387,7 @@ body {
     document.getElementById('mob').innerHTML=
       '<div class="stage-nav">'+nav+'</div>'+
       '<div class="stage-view" id="sview">'+panels+'</div>'+
-      '<div class="mob-clk"><div class="mob-clk-time"><span id="mob-clk-h"></span><span class="clk-colon">:</span><span id="mob-clk-m"></span></div></div>';
+      '<div class="mob-clk"><div class="mob-clk-time"><span id="mob-clk-h"></span><span class="clk-colon">:</span><span id="mob-clk-m"></span><div class="clk-ampm" id="mob-clk-ampm"><span class="clk-ap clk-am">AM</span><span class="clk-ap clk-pm">PM</span></div></div></div>';
     document.querySelectorAll('.snav-btn').forEach(function(b){
       b.addEventListener('click',function(){goTo(+b.dataset.idx);});
     });
@@ -398,11 +420,12 @@ body {
   }
   function tick(){
     var d=new Date(),nd=new Date(d.toLocaleString('en-US',{timeZone:getTZ()}));
-    var h=nd.getHours()%12||12,m=pad(nd.getMinutes());
+    var raw=nd.getHours(),isPM=raw>=12;
+    var h=raw%12||12,m=pad(nd.getMinutes());
     var dH=document.getElementById('clk-h');
-    if(dH){dH.textContent=h;document.getElementById('clk-m').textContent=m;}
+    if(dH){dH.textContent=h;document.getElementById('clk-m').textContent=m;var dAP=document.getElementById('clk-ampm');if(dAP)dAP.classList.toggle('is-pm',isPM);}
     var mH=document.getElementById('mob-clk-h');
-    if(mH){mH.textContent=h;document.getElementById('mob-clk-m').textContent=m;}
+    if(mH){mH.textContent=h;document.getElementById('mob-clk-m').textContent=m;var mAP=document.getElementById('mob-clk-ampm');if(mAP)mAP.classList.toggle('is-pm',isPM);}
   }
   tick();setInterval(tick,1000);
   updateTZLabel(getTZ());

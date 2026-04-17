@@ -34,13 +34,6 @@ body {
   border: 0.5px solid #444; padding: 6px 16px; border-radius: 6px;
 }
 .back:hover { color: #ccc; border-color: #666; }
-.disclaimer {
-  display: none;
-  color: #f87171;
-  font-size: 15px;
-  flex-shrink: 0;
-  padding: 2px 0 4px;
-}
 .tz-wrap { position: relative; display: inline-block; }
 .tz-btn {
   background: none; border: none; font-family: inherit; font-size: 22px;
@@ -251,26 +244,27 @@ body {
     align-items: center;
     justify-content: center;
   }
-  .clk-ampm {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-left: 7px;
-    gap: 2px;
-  }
-  .clk-ap {
-    font-size: 22px;
-    line-height: 1.1;
-    letter-spacing: 0.07em;
-    font-variant-numeric: normal;
-    font-weight: 500;
-    transition: color 0.35s;
-  }
-  .clk-am { color: #f0ece4; }
-  .clk-pm { color: #252525; }
-  .clk-ampm.is-pm .clk-am { color: #252525; }
-  .clk-ampm.is-pm .clk-pm { color: #f0ece4; }
 }
+.clk-ampm {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: stretch;
+  margin-left: 4px;
+  gap: 0;
+}
+.clk-ap {
+  font-size: 0.5em;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-variant-numeric: normal;
+  font-weight: 500;
+  transition: color 0.35s;
+}
+.clk-am { color: #f0ece4; }
+.clk-pm { color: #252525; }
+.clk-ampm.is-pm .clk-am { color: #252525; }
+.clk-ampm.is-pm .clk-pm { color: #f0ece4; }
 </style>
 </head>
 <body>
@@ -281,7 +275,6 @@ body {
     <a class="back" href="index.html">Day Picker</a>
   </div>
 </div>
-<div id="disclaimer" class="disclaimer">YouTube links and exact setlistings subject to change until livestreams start.</div>
 <div class="grid-wrap" id="gw"></div>
 <div class="mob-outer" id="mob"></div>
 <script>
@@ -308,9 +301,6 @@ body {
   var urlW=new URLSearchParams(location.search).get('w');
   var W=urlW?+urlW:(parseInt(localStorage.getItem('weekend')||'1'));
   if(W!==1&&W!==2)W=1;
-
-  var DISC_CUTOFF={1:new Date('2026-04-10T23:00:00Z'),2:new Date('2026-04-17T23:00:00Z')};
-  if(new Date()<DISC_CUTOFF[W]){var _d=document.getElementById('disclaimer');if(_d)_d.style.display='block';}
 
   // Schedule data — edit Weekend 2 entries below where the lineup differs from Weekend 1
   var STAGES={
@@ -353,7 +343,7 @@ body {
     var attr=s.href?' data-href="'+s.href+'"':'';
     return '<div class="col"'+attr+'><div class="col-head">'+esc(s.stage)+'</div><div class="acts">'+acts+'</div></div>';
   }
-  var clkCol='<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="display:inline-flex;align-items:center;font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span><div id="clk-ampm" class="clk-ampm" style="margin-left:10px;gap:3px;"><span class="clk-ap clk-am" style="font-size:26px;">AM</span><span class="clk-ap clk-pm" style="font-size:26px;">PM</span></div></div></div></div>';
+  var clkCol='<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="display:inline-flex;align-items:center;font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span><div id="clk-ampm" class="clk-ampm"><span class="clk-ap clk-am">AM</span><span class="clk-ap clk-pm">PM</span></div></div></div></div>';
   document.getElementById('gw').innerHTML=
     '<div class="row-grid">'+stages.slice(0,4).map(renderStage).join('')+'</div>'+
     '<div class="row-grid">'+stages.slice(4).map(renderStage).join('')+clkCol+'</div>';

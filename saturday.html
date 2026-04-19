@@ -129,6 +129,8 @@ body {
 .now-playing .n::before { content: '● '; font-size: 8px; color: #4ade80; vertical-align: middle; }
 .now-playing .t { color: #4ade80; }
 .next-up .n::before { content: '● '; font-size: 8px; color: #f59e0b; vertical-align: middle; }
+.now-marker { position: relative; }
+.now-marker::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; border-top: 1px dashed #f59e0b; opacity: 0.55; pointer-events: none; }
 @keyframes blink { 50% { opacity: 0; } }
 .clk-colon { animation: blink 1s step-end infinite; }
 .mob-stream {
@@ -534,24 +536,27 @@ body {
   var END=norm(4,0),PLAY_BUF=20,NEXT_BUF=10;
   function update(){
     if(!isShowDay()){
-      document.querySelectorAll('.col .act,.mob-panel .act').forEach(function(a){a.classList.remove('now-playing','next-up');});
+      document.querySelectorAll('.col .act,.mob-panel .act').forEach(function(a){a.classList.remove('now-playing','next-up','now-marker');});
       document.querySelectorAll('.snav-btn').forEach(function(b){b.classList.remove('has-live');});
       return;
     }
     var now=edtNow();
     document.querySelectorAll('.col, .mob-panel').forEach(function(col){
       var acts=col.querySelectorAll('.act');
+      var hasActive=false,firstUpcoming=-1;
       acts.forEach(function(act,i){
+        act.classList.remove('now-playing','next-up','now-marker');
         var tEl=act.querySelector('.t');
         if(!tEl)return;
         var start=parseT(tEl.dataset.edt||tEl.textContent);
         if(start===null)return;
         var next=acts[i+1];
-        var nextStart=next?parseT(next.querySelector('.t').dataset.edt||next.querySelector('.t').textContent):END;
-        act.classList.remove('now-playing','next-up');
-        if(now>=start&&now<nextStart-PLAY_BUF){act.classList.add('now-playing');}
-        else if(now>=start-NEXT_BUF&&now<start){act.classList.add('next-up');}
+        var nextStart=next?(parseT(next.querySelector('.t').dataset.edt||next.querySelector('.t').textContent)||END):END;
+        if(now>=start&&now<nextStart-PLAY_BUF){act.classList.add('now-playing');hasActive=true;}
+        else if(now>=start-NEXT_BUF&&now<start){act.classList.add('next-up');hasActive=true;}
+        if(firstUpcoming<0&&start>now)firstUpcoming=i;
       });
+      if(!hasActive&&firstUpcoming>0)acts[firstUpcoming].classList.add('now-marker');
     });
     // Live dot on stage tabs
     document.querySelectorAll('.snav-btn').forEach(function(btn){

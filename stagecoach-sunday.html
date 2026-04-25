@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stagecoach 2026 — Sunday</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  height: 100%;
+  background: #0d0d0d;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px 16px;
+  gap: 14px;
+}
+.top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 2px solid #2a2a2a;
+  padding-bottom: 14px;
+  flex-shrink: 0;
+}
+.title { font-size: 60px; font-weight: 500; color: #f0ece4; }
+.logo-img { height: 0.72em; vertical-align: middle; filter: invert(1); display: inline-block; position: relative; top: -0.03em; }
+.right { display: flex; align-items: center; gap: 20px; }
+.meta { font-size: 22px; color: #666; }
+.tz-group { display: inline-flex; align-items: center; }
+.back {
+  font-size: 20px; color: #888; text-decoration: none;
+  border: 0.5px solid #444; padding: 6px 16px; border-radius: 6px;
+}
+.back:hover { color: #ccc; border-color: #666; }
+.tz-wrap { position: relative; display: inline-block; }
+.tz-btn {
+  background: none; border: none; font-family: inherit; font-size: 22px;
+  color: #888; cursor: pointer; padding: 0;
+  text-decoration: underline; text-decoration-color: #3a3a3a; text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.tz-btn:hover { color: #ccc; }
+.tz-drop {
+  display: none; position: absolute; right: 0; top: calc(100% + 8px);
+  background: #1a1a1a; border: 0.5px solid #333; border-radius: 8px;
+  padding: 4px 0; z-index: 100; min-width: 160px;
+}
+.tz-drop.open { display: block; }
+.tz-opt {
+  display: block; width: 100%; background: none; border: none;
+  color: #666; font-family: inherit; font-size: 17px;
+  padding: 9px 16px; text-align: left; cursor: pointer; white-space: nowrap;
+}
+.tz-opt:hover { color: #f0ece4; background: rgba(255,255,255,.04); }
+.tz-opt.selected { color: #ccc; }
+.grid-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 14px;
+  min-height: 0;
+}
+.row-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+.col {
+  background: #161616;
+  border-radius: 10px;
+  border: 0.5px solid #252525;
+  padding: 16px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.col-head {
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1;
+  color: #d4c9b8;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #2a2a2a;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.col-head-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.acts {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: flex-start;
+  min-height: 0;
+}
+.act {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  border-bottom: 0.5px solid #1e1e1e;
+  padding: 10px 0;
+}
+.act:last-child { border-bottom: none; }
+.t {
+  font-size: 24px;
+  color: #d4a017;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 108px;
+}
+.n { font-size: 24px; color: #ccc; line-height: 1.3; }
+.col[data-href] { cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.col[data-href]:hover { border-color: #3a3a3a; background: #1c1c1c; }
+.now-playing .n { color: #f0ece4; font-weight: 500; }
+.now-playing .n::before { content: '● '; font-size: 8px; color: #4ade80; vertical-align: middle; }
+.now-playing .t { color: #4ade80; }
+.next-up .n::before { content: '● '; font-size: 8px; color: #f59e0b; vertical-align: middle; }
+.now-marker { position: relative; }
+.now-marker::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; border-top: 1px dashed #f59e0b; opacity: 0.55; pointer-events: none; }
+@keyframes blink { 50% { opacity: 0; } }
+.clk-colon { animation: blink 1s step-end infinite; }
+.mob-stream {
+  font-size: 14px;
+  color: #888;
+  text-decoration: none;
+  border: 1px solid #ef4444;
+  padding: 3px 9px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.mob-stream:hover { color: #ccc; border-color: #f87171; }
+.play-tri { color: #ef4444; }
+
+/* Autofit: desktop columns shrink type/spacing when content overflows */
+.col.fit-1 .t, .col.fit-1 .n { font-size: 22px; }
+.col.fit-1 .act { padding: 8px 0; }
+.col.fit-2 .t, .col.fit-2 .n { font-size: 20px; }
+.col.fit-2 .t { min-width: 92px; }
+.col.fit-2 .act { padding: 6px 0; }
+.col.fit-3 .t, .col.fit-3 .n { font-size: 18px; }
+.col.fit-3 .t { min-width: 82px; }
+.col.fit-3 .act { padding: 5px 0; }
+.col.fit-3 .col-head { font-size: 26px; }
+.col.fit-4 .t, .col.fit-4 .n { font-size: 16px; }
+.col.fit-4 .n { line-height: 1.2; }
+.col.fit-4 .t { min-width: 72px; }
+.col.fit-4 .act { padding: 4px 0; }
+.col.fit-4 .col-head { font-size: 22px; }
+.col.fit-5 .t, .col.fit-5 .n { font-size: 14px; }
+.col.fit-5 .n { line-height: 1.2; }
+.col.fit-5 .t { min-width: 64px; }
+.col.fit-5 .act { padding: 3px 0; }
+.col.fit-5 .col-head { font-size: 20px; }
+.col.fit-6 .t, .col.fit-6 .n { font-size: 12px; }
+.col.fit-6 .n { line-height: 1.15; }
+.col.fit-6 .t { min-width: 56px; }
+.col.fit-6 .act { padding: 2px 0; }
+.col.fit-6 .col-head { font-size: 18px; }
+
+/* ── Mobile ──────────────────────────────────── */
+.mob-outer { display: none; }
+
+@media (max-width: 768px) {
+  body { padding: 14px 16px 12px; gap: 10px; }
+  .grid-wrap { display: none; }
+  .mob-outer { display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 10px; }
+
+  .top { flex-wrap: wrap; align-items: center; gap: 6px; padding-bottom: 8px; border-bottom-width: 1px; }
+  .title { font-size: 22px; flex: 1 1 100%; }
+  .meta { display: none; }
+  .right { gap: 10px; }
+  .tz-drop { left: 0; right: auto; }
+
+  .stage-nav {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+  }
+  .stage-nav::-webkit-scrollbar { display: none; }
+
+  .snav-btn {
+    background: transparent;
+    border: 1px solid #252525;
+    color: #555;
+    font-size: 16px;
+    font-family: inherit;
+    padding: 6px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .snav-btn.active { border-color: #b0a898; color: #f0ece4; background: rgba(240,236,228,.07); }
+  .snav-btn.has-live::after {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    background: #4ade80;
+    border-radius: 50%;
+    margin-left: 5px;
+    vertical-align: middle;
+    position: relative; top: -1px;
+  }
+
+  .stage-view { flex: 1; min-height: 0; }
+
+  .mob-panel {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #161616;
+    border-radius: 10px;
+    border: 0.5px solid #252525;
+    padding: 14px;
+  }
+  .mob-panel.mob-active { display: flex; }
+
+  .mob-panel .col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 24px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    padding-bottom: 8px;
+    margin-bottom: 2px;
+    flex-shrink: 0;
+  }
+  .mob-panel .acts { justify-content: flex-start; flex: 0 0 auto; }
+  .mob-panel .act { padding: 6px 0; }
+  .mob-panel .t { font-size: 22px; min-width: 96px; }
+  .mob-panel .n { font-size: 22px; }
+
+  .mob-panel .now-playing {
+    background: rgba(74,222,128,.05);
+    border-left: 2px solid rgba(74,222,128,.4);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 8px 10px 10px;
+    margin: 0 -8px 0 -14px;
+  }
+  .mob-panel .now-playing .t { color: #4ade80; }
+  .mob-panel .now-playing .n { color: #f0ece4; font-weight: 500; }
+
+  .mob-clk {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 10px 0 4px;
+    border-top: 1px solid #1e1e1e;
+  }
+  .mob-clk-time {
+    font-size: 72px;
+    color: #f0ece4;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+.clk-ampm {
+  height: 0.716em;
+  width: 0.85em;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-self: center;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+.clk-ap {
+  flex: 1 1 0;
+  min-height: 0;
+  font-size: 0.48em;
+  line-height: 0.716;
+  letter-spacing: 0;
+  font-variant-numeric: normal;
+  font-weight: 700;
+  transition: color 0.35s;
+}
+.clk-am { color: #f0ece4; }
+.clk-pm { color: #252525; }
+.clk-ampm.is-pm .clk-am { color: #252525; }
+.clk-ampm.is-pm .clk-pm { color: #f0ece4; }
+
+/* ── Mobile landscape: billboard ────────────────── */
+@media (orientation: landscape) and (max-height: 500px) {
+  body { padding: 6px 10px; gap: 6px; }
+  .grid-wrap { display: flex !important; }
+  .mob-outer { display: none !important; }
+
+  .top { padding-bottom: 5px; border-bottom-width: 1px; flex-wrap: nowrap; align-items: center; gap: 8px; }
+  .title { font-size: 16px; }
+  .meta { display: none; }
+  .right { gap: 8px; }
+  .back { font-size: 12px; padding: 3px 8px; }
+  .tz-btn { font-size: 13px; }
+  .tz-opt { font-size: 13px; padding: 6px 12px; }
+
+  .grid-wrap { gap: 6px; }
+  .row-grid { gap: 6px; }
+  .col { padding: 6px 8px 4px; border-radius: 6px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .col-head { font-size: 12px; padding-bottom: 3px; margin-bottom: 2px; }
+  .mob-stream { font-size: 10px; padding: 2px 5px; margin-left: 4px; border-radius: 3px; }
+  .act { gap: 5px; padding: 1px 0; }
+  .t { font-size: 11px; min-width: 56px; }
+  .n { font-size: 11px; }
+  .now-playing .n::before, .next-up .n::before { font-size: 5px; }
+
+  #clk { font-size: 44px !important; }
+}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="title">Stagecoach 2026 &mdash; <span id="day-title" style="color:#a07cd0">Sunday</span></span>
+  <div class="right">
+    <span class="tz-group"><span class="meta">Schedule: </span><span class="tz-wrap"><button class="tz-btn" id="tz-btn" onclick="toggleTZDrop(event)"><span id="tz-abbr">EDT</span></button><div class="tz-drop" id="tz-drop"><button class="tz-opt" data-tz="America/New_York" onclick="selectTZ('America/New_York')">Eastern</button><button class="tz-opt" data-tz="America/Chicago" onclick="selectTZ('America/Chicago')">Central</button><button class="tz-opt" data-tz="America/Denver" onclick="selectTZ('America/Denver')">Mountain</button><button class="tz-opt" data-tz="America/Los_Angeles" onclick="selectTZ('America/Los_Angeles')">Pacific</button><button class="tz-opt" data-tz="Europe/London" onclick="selectTZ('Europe/London')">London</button><button class="tz-opt" data-tz="Europe/Paris" onclick="selectTZ('Europe/Paris')">Paris</button><button class="tz-opt" data-tz="Asia/Kuala_Lumpur" onclick="selectTZ('Asia/Kuala_Lumpur')">Kuala Lumpur</button><button class="tz-opt" data-tz="Asia/Tokyo" onclick="selectTZ('Asia/Tokyo')">Tokyo</button><button class="tz-opt" data-tz="Australia/Sydney" onclick="selectTZ('Australia/Sydney')">Sydney</button></div></span></span>
+    <a class="back" href="index.html">Day Picker</a>
+  </div>
+</div>
+<div class="grid-wrap" id="gw"></div>
+<div class="mob-outer" id="mob"></div>
+<script>
+(function(){
+  var SUPPORTED_TZ=['America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Asia/Kuala_Lumpur','Asia/Tokyo','Australia/Sydney'];
+  function getTZ(){
+    var s=localStorage.getItem('tz');
+    if(s&&SUPPORTED_TZ.indexOf(s)!==-1)return s;
+    try{var b=Intl.DateTimeFormat().resolvedOptions().timeZone;if(SUPPORTED_TZ.indexOf(b)!==-1)return b;}catch(e){}
+    return'America/New_York';
+  }
+  function getTZAbbr(tz){
+    try{return new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'short'}).formatToParts(new Date()).find(function(p){return p.type==='timeZoneName';}).value;}catch(e){return'EDT';}
+  }
+  function updateTZLabel(tz){
+    var el=document.getElementById('tz-abbr');if(el)el.textContent=getTZAbbr(tz);
+    document.querySelectorAll('.tz-opt').forEach(function(o){o.classList.toggle('selected',o.dataset.tz===tz);});
+  }
+  window.saveTZ=function(tz){localStorage.setItem('tz',tz);updateTZLabel(tz);updateTimes(tz);if(typeof autofit==='function')autofit();};
+  window.toggleTZDrop=function(e){e.stopPropagation();var d=document.getElementById('tz-drop');if(d)d.classList.toggle('open');};
+  window.selectTZ=function(tz){saveTZ(tz);var d=document.getElementById('tz-drop');if(d)d.classList.remove('open');};
+  document.addEventListener('click',function(){var d=document.getElementById('tz-drop');if(d)d.classList.remove('open');});
+
+  var W=1;
+
+  // Schedule data — 2 channels for Stagecoach 2026 Sunday
+  var STAGES={
+    1:[
+      {stage:'Channel 1',acts:[
+        ['6:05 PM','Jake Worthington'],
+        ['6:25 PM','Ink'],
+        ['7:00 PM','Bayker Blankenship'],
+        ['7:25 PM','Hudson Westbrook'],
+        ['8:00 PM','Kameron Marlowe'],
+        ['8:55 PM','Brett Young'],
+        ['9:50 PM','Warren Zeiders'],
+        ['10:50 PM','Brooks & Dunn'],
+        ['11:50 PM','Hootie & the Blowfish'],
+        ['1:00 AM','Post Malone'],
+        ['2:30 AM','Ludacris']
+      ]},
+      {stage:'Channel 2',acts:[
+        ['6:05 PM','Adam Sanders'],
+        ['6:25 PM','Amos Lee'],
+        ['7:00 PM','Cameron Whitcomb'],
+        ['7:40 PM','Zach John King'],
+        ['8:15 PM','Max McNown'],
+        ['9:00 PM','The Wallflowers'],
+        ['9:55 PM','Eli Young Band'],
+        ['10:25 PM','Ty Myers'],
+        ['11:25 PM','Third Eye Blind'],
+        ['12:25 AM','Wyatt Flores'],
+        ['1:30 AM','Loud Luxury'],
+        ['2:20 AM','DJ Pauly D']
+      ]}
+    ]
+  };
+
+  var DATES={1:'Sunday, April 26, 2026'};
+  var SHOW_DATES={1:'2026-04-26'};
+  document.getElementById('day-title').textContent=DATES[W];
+
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  var stages=STAGES[W];
+
+  // ── Desktop render ────────────────────────────────────
+  function renderStage(s){
+    var tz=getTZ(),sd=SHOW_DATES[W];
+    var acts=s.acts.map(function(a){
+      var utc=edtStringToUTC(a[0],sd);
+      var disp=utc?formatActTime(utc,tz):esc(a[0]);
+      var attrs=utc?' data-utc="'+utc+'" data-edt="'+esc(a[0])+'"':'';
+      return '<div class="act"><span class="t"'+attrs+'>'+disp+'</span><span class="n">'+esc(a[1])+'</span></div>';
+    }).join('');
+    var watch=s.href?'<a class="mob-stream" href="'+s.href+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="play-tri">&#9654;</span> Watch</a>':'';
+    var attr=s.href?' data-href="'+s.href+'"':'';
+    return '<div class="col"'+attr+'><div class="col-head"><span class="col-head-name">'+esc(s.stage)+'</span>'+watch+'</div><div class="acts">'+acts+'</div></div>';
+  }
+  var clkCol='<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="display:inline-flex;align-items:center;font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-0.03em;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span><div id="clk-ampm" class="clk-ampm"><span class="clk-ap clk-am">AM</span><span class="clk-ap clk-pm">PM</span></div></div></div></div>';
+  document.getElementById('gw').innerHTML=
+    '<div class="row-grid">'+stages.map(renderStage).join('')+clkCol+'</div>';
+
+  // ── Autofit desktop columns to vertical space ─────────
+  function autofit(){
+    var landscape=window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches;
+    document.querySelectorAll('.grid-wrap .col').forEach(function(col){
+      for(var i=1;i<=6;i++)col.classList.remove('fit-'+i);
+      if(landscape||!col.querySelector('.acts'))return;
+      var level=0;
+      while(col.scrollHeight>col.clientHeight+1&&level<6){
+        if(level>0)col.classList.remove('fit-'+level);
+        level++;
+        col.classList.add('fit-'+level);
+      }
+    });
+  }
+  requestAnimationFrame(autofit);
+  var rt;
+  window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(autofit,100);});
+
+  // ── Mobile render ─────────────────────────────────────
+  var ABBREV={};
+  var mobIdx=0;
+  function goTo(idx){
+    mobIdx=idx;
+    document.querySelectorAll('.snav-btn').forEach(function(b){b.classList.toggle('active',+b.dataset.idx===idx);});
+    document.querySelectorAll('.mob-panel').forEach(function(p){p.classList.toggle('mob-active',+p.dataset.idx===idx);});
+    var ab=document.querySelector('.snav-btn[data-idx="'+idx+'"]');
+    if(ab)ab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  }
+  (function(){
+    var nav=stages.map(function(s,i){
+      return '<button class="snav-btn'+(i===0?' active':'')+'" data-idx="'+i+'">'+esc(ABBREV[s.stage]||s.stage)+'</button>';
+    }).join('');
+    var panels=stages.map(function(s,i){
+      var acts=s.acts.map(function(a){
+        var utc=edtStringToUTC(a[0],SHOW_DATES[W]);
+        var disp=utc?formatActTime(utc,getTZ()):esc(a[0]);
+        var attrs=utc?' data-utc="'+utc+'" data-edt="'+esc(a[0])+'"':'';
+        return '<div class="act"><span class="t"'+attrs+'>'+disp+'</span><span class="n">'+esc(a[1])+'</span></div>';
+      }).join('');
+      var watch=s.href?'<a class="mob-stream" href="'+s.href+'" target="_blank" rel="noopener"><span class="play-tri">&#9654;</span> Watch</a>':'';
+      return '<div class="mob-panel'+(i===0?' mob-active':'')+'" data-idx="'+i+'">'+
+             '<div class="col-head"><span>'+esc(s.stage)+'</span>'+watch+'</div>'+
+             '<div class="acts">'+acts+'</div></div>';
+    }).join('');
+    document.getElementById('mob').innerHTML=
+      '<div class="stage-nav">'+nav+'</div>'+
+      '<div class="stage-view" id="sview">'+panels+'</div>'+
+      '<div class="mob-clk"><div class="mob-clk-time"><span id="mob-clk-h"></span><span class="clk-colon">:</span><span id="mob-clk-m"></span><div class="clk-ampm" id="mob-clk-ampm"><span class="clk-ap clk-am">AM</span><span class="clk-ap clk-pm">PM</span></div></div></div>';
+    document.querySelectorAll('.snav-btn').forEach(function(b){
+      b.addEventListener('click',function(){goTo(+b.dataset.idx);});
+    });
+    var tx=0,sv=document.getElementById('sview');
+    sv.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
+    sv.addEventListener('touchend',function(e){
+      var dx=e.changedTouches[0].clientX-tx;
+      if(Math.abs(dx)>50){
+        if(dx<0&&mobIdx<stages.length-1)goTo(mobIdx+1);
+        else if(dx>0&&mobIdx>0)goTo(mobIdx-1);
+      }
+    },{passive:true});
+  })();
+
+  // ── Clock (desktop only — phone has its own clock) ───
+  function pad(n){return n<10?'0'+n:n;}
+  function edtStringToUTC(timeStr,showDate){
+    var m=timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);if(!m)return null;
+    var h=+m[1],mn=+m[2],ap=m[3].toUpperCase();
+    if(ap==='PM'&&h!==12)h+=12;if(ap==='AM'&&h===12)h=0;
+    var base=new Date(showDate+'T04:00:00Z').getTime();
+    if(h<7)h+=24;
+    return base+(h*60+mn)*60000;
+  }
+  function formatActTime(utcMs,tz){
+    return new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true}).format(new Date(utcMs));
+  }
+  function updateTimes(tz){
+    document.querySelectorAll('.t[data-utc]').forEach(function(el){el.textContent=formatActTime(+el.dataset.utc,tz);});
+  }
+  function tick(){
+    var d=new Date(),nd=new Date(d.toLocaleString('en-US',{timeZone:getTZ()}));
+    var raw=nd.getHours(),isPM=raw>=12;
+    var h=raw%12||12,m=pad(nd.getMinutes());
+    var dH=document.getElementById('clk-h');
+    if(dH){dH.textContent=h;document.getElementById('clk-m').textContent=m;var dAP=document.getElementById('clk-ampm');if(dAP)dAP.classList.toggle('is-pm',isPM);}
+    var mH=document.getElementById('mob-clk-h');
+    if(mH){mH.textContent=h;document.getElementById('mob-clk-m').textContent=m;var mAP=document.getElementById('mob-clk-ampm');if(mAP)mAP.classList.toggle('is-pm',isPM);}
+  }
+  tick();setInterval(tick,1000);
+  updateTZLabel(getTZ());
+
+  // ── Now-playing ───────────────────────────────────────
+  function norm(h,m){if(h<7)h+=24;return h*60+m;}
+  function isShowDay(){
+    try{
+      var d=new Date();
+      var nd=new Date(d.toLocaleString('en-US',{timeZone:'America/New_York'}));
+      if(nd.getHours()<7)nd.setDate(nd.getDate()-1);
+      var mo=nd.getMonth()+1,dy=nd.getDate();
+      var ds=nd.getFullYear()+'-'+(mo<10?'0':'')+mo+'-'+(dy<10?'0':'')+dy;
+      return ds===SHOW_DATES[W];
+    }catch(e){return false;}
+  }
+  function edtNow(){
+    var d=new Date();
+    try{var s=d.toLocaleString('en-US',{timeZone:'America/New_York'});var nd=new Date(s);return norm(nd.getHours(),nd.getMinutes());}
+    catch(e){return norm(d.getHours(),d.getMinutes());}
+  }
+  function parseT(s){
+    var m=s.trim().match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if(!m)return null;
+    var h=+m[1],mn=+m[2],ap=m[3].toUpperCase();
+    if(ap==='PM'&&h!==12)h+=12;
+    if(ap==='AM'&&h===12)h=0;
+    return norm(h,mn);
+  }
+  var END=norm(4,0),PLAY_BUF=20,NEXT_BUF=10;
+  function update(){
+    if(!isShowDay()){
+      document.querySelectorAll('.col .act,.mob-panel .act').forEach(function(a){a.classList.remove('now-playing','next-up','now-marker');});
+      document.querySelectorAll('.snav-btn').forEach(function(b){b.classList.remove('has-live');});
+      return;
+    }
+    var now=edtNow();
+    document.querySelectorAll('.col, .mob-panel').forEach(function(col){
+      var acts=col.querySelectorAll('.act');
+      var hasActive=false,firstUpcoming=-1;
+      acts.forEach(function(act,i){
+        act.classList.remove('now-playing','next-up','now-marker');
+        var tEl=act.querySelector('.t');
+        if(!tEl)return;
+        var start=parseT(tEl.dataset.edt||tEl.textContent);
+        if(start===null)return;
+        var next=acts[i+1];
+        var nextStart=next?(parseT(next.querySelector('.t').dataset.edt||next.querySelector('.t').textContent)||END):END;
+        if(now>=start&&now<nextStart-PLAY_BUF){act.classList.add('now-playing');hasActive=true;}
+        else if(now>=start-NEXT_BUF&&now<start){act.classList.add('next-up');hasActive=true;}
+        if(firstUpcoming<0&&start>now)firstUpcoming=i;
+      });
+      if(!hasActive&&firstUpcoming>0)acts[firstUpcoming].classList.add('now-marker');
+    });
+    // Live dot on stage tabs
+    document.querySelectorAll('.snav-btn').forEach(function(btn){
+      var panel=document.querySelector('.mob-panel[data-idx="'+btn.dataset.idx+'"]');
+      btn.classList.toggle('has-live',panel&&!!panel.querySelector('.now-playing'));
+    });
+  }
+  update();setInterval(update,30000);
+  document.querySelectorAll('.col[data-href]').forEach(function(col){
+    col.addEventListener('click',function(){window.open(col.dataset.href,'_blank','noopener');});
+  });
+})();
+</script>
+</body>
+</html>

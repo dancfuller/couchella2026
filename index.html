@@ -13,6 +13,17 @@ body { display: flex; flex-direction: column; }
 h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
 .logo-img { height: 0.75em; vertical-align: middle; filter: invert(1); display: inline-block; }
 .sub { font-size: 15px; color: #666; margin-bottom: 36px; }
+.festivals { display: flex; gap: 12px; justify-content: center; margin-bottom: 22px; }
+.fbtn {
+  padding: 9px 26px; border-radius: 22px;
+  border: 1px solid #2a2a2a;
+  font-size: 15px; font-weight: 500;
+  color: #555; background: transparent;
+  cursor: pointer; font-family: inherit;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.fbtn.active { border-color: #f0ece4; color: #f0ece4; background: rgba(240,236,228,.05); }
+.fbtn:hover:not(.active) { border-color: #444; color: #888; }
 .weekends { display: flex; gap: 16px; justify-content: center; margin-bottom: 36px; }
 .wbtn {
   padding: 12px 40px; border-radius: 12px;
@@ -40,6 +51,8 @@ h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; disp
 @media (max-width: 600px) {
   h1 { font-size: 22px; }
   .sub { font-size: 13px; margin-bottom: 28px; }
+  .festivals { gap: 8px; margin-bottom: 18px; }
+  .fbtn { padding: 8px 18px; font-size: 14px; }
   .weekends { flex-direction: column; gap: 10px; align-items: stretch; margin-bottom: 28px; }
   .wbtn { padding: 14px 20px; font-size: 15px; }
   .days { flex-direction: column; gap: 12px; align-items: stretch; }
@@ -51,9 +64,13 @@ h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; disp
 <body>
 <div class="main">
   <div class="wrap">
-    <h1><img src="coachella-logo.svg" alt="Coachella" class="logo-img"> 2026 &mdash; Livestream</h1>
+    <h1 id="festival-h1"><img src="coachella-logo.svg" alt="Coachella" class="logo-img"> 2026 &mdash; Livestream</h1>
     <div class="sub" id="sub">April 10&ndash;12, 2026</div>
-    <div class="weekends">
+    <div class="festivals">
+      <button class="fbtn active" id="coa-fbtn" onclick="setFestival('coachella')">Coachella</button>
+      <button class="fbtn" id="sta-fbtn" onclick="setFestival('stagecoach')">Stagecoach</button>
+    </div>
+    <div class="weekends" id="weekends-row">
       <button class="wbtn active" id="w1btn" onclick="setWeekend(1)">Weekend 1<span class="wd">Apr 10&ndash;12</span></button>
       <button class="wbtn" id="w2btn" onclick="setWeekend(2)">Weekend 2<span class="wd">Apr 17&ndash;19</span></button>
     </div>
@@ -69,6 +86,12 @@ var WEEKS = {
   1: { fri:['friday.html','April 10'], sat:['saturday.html','April 11'], sun:['sunday.html','April 12'], sub:'April 10\u201312, 2026' },
   2: { fri:['friday.html?w=2','April 17'], sat:['saturday.html?w=2','April 18'], sun:['sunday.html?w=2','April 19'], sub:'April 17\u201319, 2026' }
 };
+var STAGECOACH = {
+  fri:['stagecoach-friday.html','April 24'],
+  sat:['stagecoach-saturday.html','April 25'],
+  sun:['stagecoach-sunday.html','April 26'],
+  sub:'April 24\u201326, 2026'
+};
 function setWeekend(n) {
   localStorage.setItem('weekend', n);
   var w = WEEKS[n];
@@ -81,7 +104,33 @@ function setWeekend(n) {
   });
   document.getElementById('sub').innerHTML = w.sub;
 }
+function setFestival(f) {
+  localStorage.setItem('festival', f);
+  document.getElementById('coa-fbtn').classList.toggle('active', f === 'coachella');
+  document.getElementById('sta-fbtn').classList.toggle('active', f === 'stagecoach');
+  var weekendsRow = document.getElementById('weekends-row');
+  var h1 = document.getElementById('festival-h1');
+  if (f === 'stagecoach') {
+    weekendsRow.style.display = 'none';
+    h1.innerHTML = 'Stagecoach 2026 &mdash; Livestream';
+    document.title = 'Stagecoach 2026';
+    document.getElementById('sub').innerHTML = STAGECOACH.sub;
+    [['fri-btn', STAGECOACH.fri], ['sat-btn', STAGECOACH.sat], ['sun-btn', STAGECOACH.sun]].forEach(function(p) {
+      var el = document.getElementById(p[0]);
+      el.href = p[1][0];
+      el.querySelector('.d').textContent = p[1][1];
+    });
+  } else {
+    weekendsRow.style.display = '';
+    h1.innerHTML = '<img src="coachella-logo.svg" alt="Coachella" class="logo-img"> 2026 &mdash; Livestream';
+    document.title = 'Couchella 2026';
+    var saved = localStorage.getItem('weekend');
+    setWeekend(saved === '2' ? 2 : 1);
+  }
+}
 (function() {
+  var savedFest = localStorage.getItem('festival');
+  if (savedFest === 'stagecoach') { setFestival('stagecoach'); return; }
   var saved = localStorage.getItem('weekend');
   var w = saved ? parseInt(saved) : (function() {
     var n = new Date(), d = n.getFullYear()*10000 + (n.getMonth()+1)*100 + n.getDate();

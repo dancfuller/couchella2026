@@ -64,7 +64,7 @@ h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; disp
 <body>
 <div class="main">
   <div class="wrap">
-    <h1 id="festival-h1"><img src="coachella-logo.svg" alt="Coachella" class="logo-img"> 2026 &mdash; Livestream</h1>
+    <h1 id="festival-h1"><img src="couchella-logo.svg" alt="Couchella" class="logo-img"> 2026 &mdash; Livestream</h1>
     <div class="sub" id="sub">April 10&ndash;12, 2026</div>
     <div class="festivals">
       <button class="fbtn active" id="coa-fbtn" onclick="setFestival('coachella')">Coachella</button>
@@ -122,7 +122,7 @@ function setFestival(f) {
     });
   } else {
     weekendsRow.style.display = '';
-    h1.innerHTML = '<img src="coachella-logo.svg" alt="Coachella" class="logo-img"> 2026 &mdash; Livestream';
+    h1.innerHTML = '<img src="couchella-logo.svg" alt="Couchella" class="logo-img"> 2026 &mdash; Livestream';
     document.title = 'Couchella 2026';
     var saved = localStorage.getItem('weekend');
     setWeekend(saved === '2' ? 2 : 1);

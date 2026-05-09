@@ -68,7 +68,7 @@ h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; disp
     <div class="sub" id="sub">April 10&ndash;12, 2026</div>
     <div class="festivals">
       <button class="fbtn active" id="coa-fbtn" onclick="setFestival('coachella')">Coachella</button>
-      <button class="fbtn" id="sta-fbtn" onclick="setFestival('stagecoach')">Stagecoach</button>
+      <button class="fbtn" id="sta-fbtn" onclick="setFestival('stagecoach')"><img src="stagecouch-logo.svg" alt="Stagecoach" class="logo-img"></button>
     </div>
     <div class="weekends" id="weekends-row">
       <button class="wbtn active" id="w1btn" onclick="setWeekend(1)">Weekend 1<span class="wd">Apr 10&ndash;12</span></button>
@@ -112,7 +112,7 @@ function setFestival(f) {
   var h1 = document.getElementById('festival-h1');
   if (f === 'stagecoach') {
     weekendsRow.style.display = 'none';
-    h1.innerHTML = 'Stagecoach 2026 &mdash; Livestream';
+    h1.innerHTML = '<img src="stagecouch-logo.svg" alt="Stagecoach" class="logo-img"> 2026 &mdash; Livestream';
     document.title = 'Stagecoach 2026';
     document.getElementById('sub').innerHTML = STAGECOACH.sub;
     [['fri-btn', STAGECOACH.fri], ['sat-btn', STAGECOACH.sat], ['sun-btn', STAGECOACH.sun]].forEach(function(p) {

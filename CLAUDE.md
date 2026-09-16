@@ -69,7 +69,11 @@ All logic lives in one IIFE per day file. Key pieces:
   Recomputes every 30 s.
 - **Responsive layouts** — three distinct modes:
   - Desktop grid (`.grid-wrap`) with per-column **autofit** that shrinks type via
-    `fit-1`…`fit-6` classes until each column's acts fit vertically.
+    `fit-1`…`fit-7` classes (`FIT_MAX`) until each column's acts fit vertically.
+    If a column still overflows at `fit-7` it gets `fit-scroll` (scrolls) — acts
+    must never be clipped by `.col{overflow:hidden}`. Autofit re-runs on resize,
+    tz change, and whenever `update()` changes now-playing classes
+    (`refitIfLiveChanged`), since bold/bullet styling can wrap names.
   - Mobile portrait (`.mob-outer`, ≤768px): one stage panel at a time with a
     swipeable tab nav and its own large clock.
   - Mobile landscape (orientation + max-height:500px): a compact "billboard"

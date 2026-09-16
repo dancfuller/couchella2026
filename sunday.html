@@ -172,6 +172,13 @@ body {
 .col.fit-6 .t { min-width: 56px; }
 .col.fit-6 .act { padding: 2px 0; }
 .col.fit-6 .col-head { font-size: 18px; }
+.col.fit-7 .t, .col.fit-7 .n { font-size: 11px; }
+.col.fit-7 .n { line-height: 1.1; }
+.col.fit-7 .t { min-width: 52px; }
+.col.fit-7 .act { padding: 1px 0; }
+.col.fit-7 .col-head { font-size: 16px; }
+/* Last resort: still too tall at the smallest size -> scroll instead of clipping acts */
+.col.fit-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: #3a3a3a transparent; }
 
 /* ── Mobile ──────────────────────────────────── */
 .mob-outer { display: none; }
@@ -419,17 +426,21 @@ body {
     '<div class="row-grid">'+stages.slice(4).map(renderStage).join('')+clkCol+'</div>';
 
   // ── Autofit desktop columns to vertical space ─────────
+  var FIT_MAX=7;
   function autofit(){
     var landscape=window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches;
     document.querySelectorAll('.grid-wrap .col').forEach(function(col){
-      for(var i=1;i<=6;i++)col.classList.remove('fit-'+i);
+      for(var i=1;i<=FIT_MAX;i++)col.classList.remove('fit-'+i);
+      col.classList.remove('fit-scroll');
       if(landscape||!col.querySelector('.acts'))return;
       var level=0;
-      while(col.scrollHeight>col.clientHeight+1&&level<6){
+      while(col.scrollHeight>col.clientHeight+1&&level<FIT_MAX){
         if(level>0)col.classList.remove('fit-'+level);
         level++;
         col.classList.add('fit-'+level);
       }
+      // Never clip: if the smallest size still overflows, let this column scroll
+      if(col.scrollHeight>col.clientHeight+1)col.classList.add('fit-scroll');
     });
   }
   requestAnimationFrame(autofit);
@@ -534,10 +545,16 @@ body {
     return norm(h,mn);
   }
   var END=norm(4,0),PLAY_BUF=20,NEXT_BUF=10;
+  var liveSig=null;
+  function refitIfLiveChanged(){
+    var sig=Array.prototype.map.call(document.querySelectorAll('.grid-wrap .act'),function(a){return a.className;}).join('|');
+    if(sig!==liveSig){liveSig=sig;autofit();}
+  }
   function update(){
     if(!isShowDay()){
       document.querySelectorAll('.col .act,.mob-panel .act').forEach(function(a){a.classList.remove('now-playing','next-up','now-marker');});
       document.querySelectorAll('.snav-btn').forEach(function(b){b.classList.remove('has-live');});
+      refitIfLiveChanged();
       return;
     }
     var now=edtNow();
@@ -563,6 +580,7 @@ body {
       var panel=document.querySelector('.mob-panel[data-idx="'+btn.dataset.idx+'"]');
       btn.classList.toggle('has-live',panel&&!!panel.querySelector('.now-playing'));
     });
+    refitIfLiveChanged();
   }
   update();setInterval(update,30000);
   document.querySelectorAll('.col[data-href]').forEach(function(col){

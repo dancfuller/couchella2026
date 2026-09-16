@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schedule import — Couchella 2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #0d0d0d; color: #ccc; font: 15px/1.45 Arial, Helvetica, sans-serif; padding: 24px; }
+h1 { font-size: 26px; font-weight: 500; color: #f0ece4; margin: 0 0 4px; }
+h2 { font-size: 17px; font-weight: 500; color: #d4c9b8; margin: 0 0 10px; }
+.lede { color: #777; margin: 0 0 20px; max-width: 900px; }
+.lede code, li code { color: #d4a017; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 1000px) { .cols { grid-template-columns: minmax(0, 1fr); } body { padding: 14px; } }
+.card { background: #161616; border: 0.5px solid #252525; border-radius: 10px; padding: 16px; margin-bottom: 18px; }
+.row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 12px; }
+label { color: #999; }
+select, input[type=date], textarea, button {
+  font: inherit; color: #f0ece4; background: #0f0f0f; border: 1px solid #333; border-radius: 6px; padding: 6px 10px;
+}
+textarea { width: 100%; font-family: Consolas, Menlo, monospace; font-size: 13px; resize: vertical; }
+#paste { min-height: 360px; }
+#output { min-height: 260px; color: #bbb; }
+button { cursor: pointer; background: #1d1d1d; }
+button:hover { border-color: #666; }
+button.primary { border-color: #5fad8c; color: #5fad8c; }
+button:disabled { opacity: .4; cursor: default; }
+.hint { color: #666; font-size: 13px; }
+ul.issues { list-style: none; padding: 0; margin: 0 0 10px; }
+ul.issues li { padding: 3px 0 3px 22px; position: relative; }
+ul.issues li::before { position: absolute; left: 0; }
+li.error { color: #f87171; } li.error::before { content: '✖'; }
+li.warn { color: #f59e0b; } li.warn::before { content: '▲'; }
+li.note { color: #8a8a8a; } li.note::before { content: '•'; }
+li.ok { color: #4ade80; } li.ok::before { content: '✔'; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+td { padding: 3px 8px; border-bottom: 0.5px solid #1e1e1e; vertical-align: top; }
+td.t { color: #d4a017; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr.stage td { color: #d4c9b8; font-weight: 500; padding-top: 12px; border-bottom-color: #2a2a2a; }
+tr.same td { color: #555; }
+tr.added td { color: #4ade80; } tr.added td:first-child::before { content: '+ '; }
+tr.removed td { color: #f87171; text-decoration: line-through; } tr.removed td:first-child::before { content: '− '; }
+tr.time td, tr.href td { color: #f59e0b; }
+.summary { color: #999; margin-bottom: 8px; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 10px; border: 1px solid #333; font-size: 12px; margin-left: 6px; }
+details summary { cursor: pointer; color: #999; }
+pre.prompt { white-space: pre-wrap; background: #0f0f0f; border: 1px solid #252525; border-radius: 6px; padding: 10px; font-size: 13px; color: #aaa; }
+</style>
+</head>
+<body>
+<h1>Schedule import</h1>
+<p class="lede">
+  Paste a new or corrected schedule for one festival day and weekend. This page checks it, shows exactly
+  what changes compared with the committed data, and builds the replacement <code>data/&lt;schedule&gt;.js</code>.
+  It never writes files itself: save the output, run <code>node tools/check-schedules.js</code>, look at
+  <code>git diff</code>, commit.
+</p>
+
+<div class="card">
+  <h2>Committed schedules</h2>
+  <ul class="issues" id="all-status"></ul>
+</div>
+
+<div class="cols">
+  <div>
+    <div class="card">
+      <h2>1. Target</h2>
+      <div class="row">
+        <label>Schedule <select id="key"></select></label>
+        <label id="wk-wrap">Weekend <select id="wk"><option value="1">1</option><option value="2">2</option></select></label>
+        <label>Show date <input type="date" id="showdate"></label>
+      </div>
+      <div class="row">
+        <label>Pasted times are in
+          <select id="tz"><option value="ET">Eastern (ET)</option><option value="PT">Pacific (PT) — convert to ET</option></select>
+        </label>
+        <label><input type="checkbox" id="keep" checked> Keep stages that aren't in the paste</label>
+      </div>
+      <div class="row">
+        <button id="load-current">Put current schedule in the paste box</button>
+        <span class="hint">…then edit it, or replace it wholesale.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. Paste</h2>
+      <textarea id="paste" spellcheck="false" placeholder="Main Stage | https://www.youtube.com/watch?v=...
+8:30 PM  Teddy Swims
+10:00 PM  The xx
+
+Outdoor Theatre
+7:00 PM  Dabeull
+8:20 PM  Lykke Li"></textarea>
+      <p class="hint">
+        One stage name per block (optionally <code>| stream URL</code>), then one act per line with its time first
+        or last. Blank lines between stages. JSON also works: a stages array, <code>{stages:[…]}</code>, or a
+        one-weekend <code>{weekends:{…}}</code>. A stage without a URL keeps its current one.
+      </p>
+      <details>
+        <summary>Prompt to use when converting a festival web page in a chat</summary>
+        <pre class="prompt" id="prompt">Convert the schedule below into exactly this plain-text format and output nothing else:
+
+&lt;Stage name&gt; | &lt;livestream URL if given, otherwise omit the " | " part&gt;
+&lt;h:mm AM/PM&gt;  &lt;Artist name exactly as written&gt;
+&lt;h:mm AM/PM&gt;  &lt;Artist name&gt;
+
+(blank line between stages)
+
+Rules: one act per line; start time only (drop end times); keep the times in the
+timezone the source uses and tell me which timezone that is; keep every stage and act;
+don't fix spelling or add commentary.
+
+SCHEDULE:
+</pre>
+        <button id="copy-prompt">Copy prompt</button>
+      </details>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h2>3. Check</h2>
+      <ul class="issues" id="issues"></ul>
+    </div>
+    <div class="card">
+      <h2>4. Changes vs committed data <span class="pill" id="wk-pill"></span></h2>
+      <div class="summary" id="diff-summary"></div>
+      <label class="hint"><input type="checkbox" id="show-same"> Show unchanged acts</label>
+      <table id="diff"></table>
+    </div>
+    <div class="card">
+      <h2>5. New data file</h2>
+      <p class="hint" id="out-hint"></p>
+      <div class="row">
+        <button class="primary" id="copy-out" disabled>Copy</button>
+        <button id="download-out" disabled>Download</button>
+      </div>
+      <textarea id="output" readonly spellcheck="false"></textarea>
+    </div>
+  </div>
+</div>
+
+<script src="schedule-lib.js"></script>
+<script src="../data/coachella-friday.js"></script>
+<script src="../data/coachella-saturday.js"></script>
+<script src="../data/coachella-sunday.js"></script>
+<script src="../data/stagecoach-friday.js"></script>
+<script src="../data/stagecoach-saturday.js"></script>
+<script src="../data/stagecoach-sunday.js"></script>
+<script>
+(function () {
+  var L = window.ScheduleLib, S = window.SCHEDULES || {};
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function li(cls, text) { return '<li class="' + cls + '">' + esc(text) + '</li>'; }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  // Committed-data health check
+  $('all-status').innerHTML = L.KEYS.map(function (k) {
+    var issues = L.validateSchedule(k, S[k]);
+    if (!issues.length) return li('ok', k + ': no problems');
+    return issues.map(function (i) { return li(i.level, i.where + ': ' + i.msg); }).join('');
+  }).join('');
+
+  $('key').innerHTML = L.KEYS.map(function (k) { return '<option value="' + k + '">' + k + '</option>'; }).join('');
+
+  var generated = '';
+  function target() {
+    var key = $('key').value, coachella = L.festivalOf(key) === 'coachella';
+    return { key: key, wk: coachella ? $('wk').value : '1', coachella: coachella, current: S[key] };
+  }
+  function syncTarget() {
+    var t = target();
+    $('wk-wrap').style.display = t.coachella ? '' : 'none';
+    var cw = t.current && t.current.weekends[t.wk];
+    $('showdate').value = cw ? cw.showDate : '';
+    render();
+  }
+
+  function render() {
+    var t = target(), issues = [], text = $('paste').value;
+    var currentWk = t.current && t.current.weekends[t.wk];
+    $('wk-pill').textContent = t.key + (t.coachella ? ' · weekend ' + t.wk : '');
+    generated = '';
+    $('copy-out').disabled = $('download-out').disabled = true;
+    $('output').value = '';
+    $('diff').innerHTML = ''; $('diff-summary').textContent = '';
+
+    if (!t.current) issues.push(li('error', 'data/' + t.key + '.js did not load — fix it first (node tools/check-schedules.js).'));
+    if (!text.trim()) {
+      $('issues').innerHTML = issues.join('') || li('note', 'Paste a schedule to begin.');
+      $('out-hint').textContent = '';
+      return;
+    }
+    var parsed = L.parsePaste(text, { sourceTz: $('tz').value });
+    parsed.errors.forEach(function (e) { issues.push(li('error', e)); });
+    parsed.notes.forEach(function (n) { issues.push(li('note', n)); });
+
+    var merged = L.mergeStages(currentWk ? currentWk.stages : [], parsed.stages, { keepMissing: $('keep').checked });
+    merged.notes.forEach(function (n) { issues.push(li(/REMOVED/.test(n) ? 'warn' : 'note', n)); });
+
+    var next = t.current ? clone(t.current) : { weekends: {} };
+    next.weekends[t.wk] = { showDate: $('showdate').value, stages: merged.stages };
+    var v = L.validateSchedule(t.key, next).filter(function (i) { return i.where.indexOf(' W' + t.wk) !== -1 || i.where === t.key; });
+    v.forEach(function (i) { issues.push(li(i.level, i.where + ': ' + i.msg)); });
+    var nErr = parsed.errors.length + v.filter(function (i) { return i.level === 'error'; }).length + (t.current ? 0 : 1);
+    // Diff. Removals are also surfaced as warnings: silently losing data is the main risk.
+    var rows = L.diffStages(currentWk ? currentWk.stages : [], merged.stages);
+    rows.forEach(function (r) {
+      if (r.kind === 'removed') issues.push(li('warn', r.stage + ': "' + r.name + '" (' + r.time + ') will be removed.'));
+      if (r.kind === 'stage-removed') issues.push(li('warn', r.stage + ': whole stage will be removed.'));
+    });
+    if (!nErr) issues.unshift(li('ok', 'No errors' + (issues.some(function (h) { return h.indexOf('class="warn"') !== -1; }) ? ' (review the warnings)' : '') + '.'));
+    $('issues').innerHTML = issues.join('');
+    var showSame = $('show-same').checked, changedStage = {};
+    rows.forEach(function (r) { if (r.kind !== 'same') changedStage[r.stage] = true; });
+    var counts = {}, html = '', lastStage = null;
+    rows.forEach(function (r) {
+      counts[r.kind] = (counts[r.kind] || 0) + 1;
+      if (!showSame && (r.kind === 'same' || !changedStage[r.stage])) return;
+      if (r.stage !== lastStage && r.kind !== 'stage-removed') { html += '<tr class="stage"><td colspan="2">' + esc(r.stage) + (r.kind === 'stage-added' ? ' <span class="pill">new stage</span>' : '') + '</td></tr>'; lastStage = r.stage; }
+      if (r.kind === 'stage-added') return;
+      if (r.kind === 'stage-removed') { html += '<tr class="removed stage"><td colspan="2">' + esc(r.stage) + ' (whole stage)</td></tr>'; return; }
+      if (r.kind === 'href') { html += '<tr class="href"><td class="t">link</td><td>' + esc(r.from || '(none)') + ' → ' + esc(r.to || '(none)') + '</td></tr>'; return; }
+      if (r.kind === 'time') { html += '<tr class="time"><td class="t">' + esc(r.from) + ' → ' + esc(r.time) + '</td><td>' + esc(r.name) + (r.fromName !== r.name ? ' (was ' + esc(r.fromName) + ')' : '') + '</td></tr>'; return; }
+      html += '<tr class="' + r.kind + '"><td class="t">' + esc(r.time) + '</td><td>' + esc(r.name) + '</td></tr>';
+    });
+    if (currentWk && currentWk.showDate !== $('showdate').value) {
+      html = '<tr class="time"><td class="t">show date</td><td>' + esc(currentWk.showDate) + ' → ' + esc($('showdate').value) + '</td></tr>' + html;
+      counts.date = 1;
+    }
+    $('diff').innerHTML = html;
+    var changed = (counts.added || 0) + (counts.removed || 0) + (counts.time || 0) + (counts.href || 0) + (counts['stage-added'] || 0) + (counts['stage-removed'] || 0) + (counts.date || 0);
+    $('diff-summary').textContent = changed
+      ? [['time', 'time/name changes'], ['added', 'acts added'], ['removed', 'acts removed'], ['href', 'link changes'], ['stage-added', 'stages added'], ['stage-removed', 'stages removed'], ['date', 'show date change']]
+          .filter(function (p) { return counts[p[0]]; }).map(function (p) { return counts[p[0]] + ' ' + p[1]; }).join(' · ')
+      : 'No changes — the paste matches the committed schedule.';
+
+    if (nErr) {
+      $('out-hint').textContent = 'Fix the errors above to get a data file.';
+      return;
+    }
+    generated = L.serialize(t.key, next);
+    $('output').value = generated;
+    $('copy-out').disabled = $('download-out').disabled = false;
+    $('out-hint').textContent = 'Save as data/' + t.key + '.js (replacing it). The other weekend is carried over unchanged.';
+  }
+
+  function copyText(text, btn) {
+    function done() { var o = btn.textContent; btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = o; }, 1200); }
+    if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(done, fallback); } else fallback();
+    function fallback() {
+      var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {} document.body.removeChild(ta);
+    }
+  }
+
+  ['key', 'wk'].forEach(function (id) { $(id).addEventListener('change', syncTarget); });
+  ['tz', 'keep', 'showdate', 'show-same'].forEach(function (id) { $(id).addEventListener('change', render); });
+  $('paste').addEventListener('input', render);
+  $('load-current').addEventListener('click', function () {
+    var t = target(), cw = t.current && t.current.weekends[t.wk];
+    if (!cw) return;
+    $('tz').value = 'ET';
+    $('paste').value = L.toText(cw.stages);
+    render();
+  });
+  $('copy-out').addEventListener('click', function () { copyText(generated, $('copy-out')); });
+  $('copy-prompt').addEventListener('click', function () { copyText($('prompt').textContent, $('copy-prompt')); });
+  $('download-out').addEventListener('click', function () {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([generated], { type: 'text/javascript' }));
+    a.download = target().key + '.js';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  });
+  syncTarget();
+})();
+</script>
+</body>
+</html>

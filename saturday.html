@@ -355,6 +355,7 @@ body {
 </div>
 <div class="grid-wrap" id="gw"></div>
 <div class="mob-outer" id="mob"></div>
+<script src="data/coachella-saturday.js"></script>
 <script>
 (function(){
   var SUPPORTED_TZ=['America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Asia/Kuala_Lumpur','Asia/Tokyo','Australia/Sydney'];
@@ -383,34 +384,26 @@ body {
   var urlW=+new URLSearchParams(location.search).get('w');
   var W=(urlW===1||urlW===2)?urlW:(function(){var n=new Date();return n.getFullYear()*10000+(n.getMonth()+1)*100+n.getDate()>=WEEKEND_CUTOVER?2:1;})();
 
-  // Schedule data — edit Weekend 2 entries below where the lineup differs from Weekend 1
-  var STAGES={
-    1:[
-      {stage:'Main Stage',href:'https://www.youtube.com/watch?v=2NA7XUw51oo',acts:[['8:30 PM','Addison Rae'],['10:00 PM','Giveon'],['12:00 AM','The Strokes'],['2:25 AM','Justin Bieber']]},
-      {stage:'Outdoor Theatre',href:'https://www.youtube.com/watch?v=MdUBm8G41ZU',acts:[['7:00 PM','Los Hermanos Flores'],['8:10 PM','Alex G'],['9:10 PM','Blondshell'],['10:05 PM','Sombr'],['11:30 PM','Labrinth'],['1:20 AM','David Byrne']]},
-      {stage:'Sahara',href:'https://www.youtube.com/watch?v=NlrpPqb0vwo',acts:[['7:00 PM','Zulan'],['8:00 PM','Hamdi'],['9:15 PM','¥ØU$UK€ ¥UK1MAT$U'],['10:15 PM','TEED'],['11:00 PM','Nine Inch Noize'],['12:10 AM','Rezz'],['1:30 AM','Adriatique'],['2:55 AM','Worship']]},
-      {stage:'Mojave',href:'https://www.youtube.com/watch?v=HJVG2Ck3uuk',acts:[['7:00 PM','Jack White'],['7:50 PM','Fujii Kaze'],['8:50 PM','Royel Otis'],['10:30 PM','Taemin'],['11:55 PM','PinkPantheress'],['1:15 AM','Interpol']]},
-      {stage:'Gobi',href:'https://www.youtube.com/watch?v=4C5p1tdRv6c',acts:[['7:05 PM','Whatmore'],['8:10 PM','Luísa Sonza'],['9:15 PM','Geese'],['10:05 PM','Noga Erez'],['10:50 PM','Davido'],['12:00 AM','BIA'],['1:10 AM','Morat']]},
-      {stage:'Sonora',href:'https://youtu.be/OGNPnQViI3g',acts:[['7:20 PM','Ecca Vandal'],['8:30 PM','Ceremony'],['9:40 PM','Rusowsky'],['10:50 PM','54 Ultra'],['11:45 PM','Die Spitz'],['12:45 AM','Mind Enterprises'],['1:45 AM','Freak Slug']]},
-      {stage:'Quasar',href:'https://www.youtube.com/watch?v=1KANGsDaRvw',acts:[['8:00 PM','Joezi'],['10:00 PM','Afrojack x Shimza']]}
-    ],
-    2:[
-      {stage:'Main Stage',href:'https://m.youtube.com/watch?v=xIiSaqq10Yw',acts:[['8:25 PM','Addison Rae'],['10:00 PM','Giveon'],['12:00 AM','The Strokes'],['2:25 AM','Justin Bieber']]},
-      {stage:'Outdoor Theatre',href:'https://m.youtube.com/watch?v=CzAJcgiywFo',acts:[['7:00 PM','Los Hermanos Flores'],['8:10 PM','Alex G'],['9:10 PM','Blondshell'],['10:05 PM','Sombr'],['11:30 PM','Labrinth'],['1:20 AM','David Byrne']]},
-      {stage:'Sahara',href:'https://m.youtube.com/watch?v=bkCTPTwU7ls',acts:[['7:00 PM','Zulan'],['8:00 PM','Hamdi'],['9:15 PM','¥ØU$UK€ ¥UK1MAT$U'],['10:15 PM','TEED'],['11:00 PM','Nine Inch Noize'],['12:15 AM','Adriatique'],['1:35 AM','Worship']]},
-      {stage:'Mojave',href:'https://m.youtube.com/watch?v=cYT79Dp0Wuk',acts:[['7:00 PM','Kacey Musgraves'],['7:55 PM','Fujii Kaze'],['8:50 PM','Royel Otis'],['10:30 PM','Taemin'],['11:55 PM','PinkPantheress'],['1:15 AM','Interpol']]},
-      {stage:'Gobi',href:'https://m.youtube.com/watch?v=OMImphySFJs',acts:[['7:00 PM','Whatmore'],['8:10 PM','Luísa Sonza'],['9:15 PM','Geese'],['10:05 PM','Noga Erez'],['10:50 PM','Davido'],['12:00 AM','BIA'],['1:10 AM','Morat']]},
-      {stage:'Yuma',href:'https://m.youtube.com/watch?v=s5A5Y93nmPI',acts:[['7:00 PM','Riordan'],['7:15 PM','Mahmut Orhan'],['8:30 PM','Ben Sterling'],['9:45 PM','SOSA'],['11:15 PM','Bedouin'],['12:45 AM','Boys Noize'],['2:00 AM','Armin van Buuren x Adam Beyer']]},
-      {stage:'Quasar',href:'https://m.youtube.com/watch?v=iulgXa5S62A',acts:[['8:00 PM','Joezi'],['11:15 PM','DJ Snake x RL Grime x Flosstradamus'],['12:45 AM','DJ Snake x Knock2']]}
-    ]
-  };
-
-  var DATES={1:'Saturday, April 11, 2026',2:'Saturday, April 18, 2026'};
-  var SHOW_DATES={1:'2026-04-11',2:'2026-04-18'};
+  // Schedule data lives in data/coachella-saturday.js (loaded above). Edit it with
+  // tools/import.html and check with `node tools/check-schedules.js`.
+  var SCHEDULE_KEY='coachella-saturday';
+  var DATA=(window.SCHEDULES||{})[SCHEDULE_KEY];
+  if(!DATA||!DATA.weekends||!DATA.weekends[W]){
+    // A broken data file must not blank the page silently.
+    var msg='Schedule data failed to load (data/'+SCHEDULE_KEY+'.js). Run: node tools/check-schedules.js';
+    ['gw','mob'].forEach(function(id){document.getElementById(id).innerHTML='<div style="color:#f87171;font-size:20px;padding:24px;">'+msg+'</div>';});
+    return;
+  }
+  var STAGES={},DATES={},SHOW_DATES={};
+  Object.keys(DATA.weekends).forEach(function(k){
+    STAGES[k]=DATA.weekends[k].stages;
+    SHOW_DATES[k]=DATA.weekends[k].showDate;
+    DATES[k]=new Intl.DateTimeFormat('en-US',{timeZone:'UTC',weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(new Date(SHOW_DATES[k]+'T12:00:00Z'));
+  });
   document.getElementById('day-title').textContent=DATES[W];
   document.getElementById('wk-label').textContent='Weekend '+W;
 
-  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
   var stages=STAGES[W];
 
   // ── Desktop render ────────────────────────────────────
@@ -422,8 +415,8 @@ body {
       var attrs=utc?' data-utc="'+utc+'" data-edt="'+esc(a[0])+'"':'';
       return '<div class="act"><span class="t"'+attrs+'>'+disp+'</span><span class="n">'+esc(a[1])+'</span></div>';
     }).join('');
-    var watch=s.href?'<a class="mob-stream" href="'+s.href+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="play-tri">&#9654;</span> Watch</a>':'';
-    var attr=s.href?' data-href="'+s.href+'"':'';
+    var watch=s.href?'<a class="mob-stream" href="'+esc(s.href)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="play-tri">&#9654;</span> Watch</a>':'';
+    var attr=s.href?' data-href="'+esc(s.href)+'"':'';
     return '<div class="col"'+attr+'><div class="col-head"><span class="col-head-name">'+esc(s.stage)+'</span>'+watch+'</div><div class="acts">'+acts+'</div></div>';
   }
   var clkCol='<div class="col" style="align-items:center;justify-content:center;"><div style="text-align:center;"><div id="clk" style="display:inline-flex;align-items:center;font-size:98px;color:#f0ece4;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-0.03em;"><span id="clk-h"></span><span class="clk-colon">:</span><span id="clk-m"></span><div id="clk-ampm" class="clk-ampm"><span class="clk-ap clk-am">AM</span><span class="clk-ap clk-pm">PM</span></div></div></div></div>';
@@ -474,7 +467,7 @@ body {
         var attrs=utc?' data-utc="'+utc+'" data-edt="'+esc(a[0])+'"':'';
         return '<div class="act"><span class="t"'+attrs+'>'+disp+'</span><span class="n">'+esc(a[1])+'</span></div>';
       }).join('');
-      var watch=s.href?'<a class="mob-stream" href="'+s.href+'" target="_blank" rel="noopener"><span class="play-tri">&#9654;</span> Watch</a>':'';
+      var watch=s.href?'<a class="mob-stream" href="'+esc(s.href)+'" target="_blank" rel="noopener"><span class="play-tri">&#9654;</span> Watch</a>':'';
       return '<div class="mob-panel'+(i===0?' mob-active':'')+'" data-idx="'+i+'">'+
              '<div class="col-head"><span>'+esc(s.stage)+'</span>'+watch+'</div>'+
              '<div class="acts">'+acts+'</div></div>';

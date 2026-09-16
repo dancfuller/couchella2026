@@ -56,8 +56,17 @@ All logic lives in one IIFE per day file. Key pieces:
   array of `['8:30 PM', 'Artist Name']` pairs. **Times are authored in Eastern
   (ET) wall-clock** and converted from there. Edit Weekend 2 entries where the
   lineup/set-times differ from Weekend 1.
-- **Weekend selection** — `?w=2` query param, else `localStorage.weekend`,
-  default 1. The day picker sets these.
+- **Weekend selection** — `?w=1|2` query param (every day-picker link carries
+  it), else by today's date: W2 from `WEEKEND_CUTOVER` (2026-04-14). Day pages
+  deliberately do **not** read `localStorage` for this — a remembered choice
+  used to pin bookmarks to the wrong weekend. The header shows "Weekend N"
+  (`#wk-label`). Stagecoach pages hard-code `W=1`.
+- **Day picker defaults** (`index.html`) — only explicit clicks are saved
+  (`weekend`/`festival` + `weekendAt`/`festivalAt` timestamps) and they expire
+  after `PICK_TTL` (12 h). Otherwise festival and weekend come from the date
+  (`STAGECOACH_CUTOVER` 2026-04-20, `WEEKEND_CUTOVER` 2026-04-14).
+  `WEEKEND_CUTOVER` is **mirrored** in the three Coachella day pages — change
+  all four together.
 - **Timezones** — `SUPPORTED_TZ` list drives the dropdown. Authored ET times are
   turned into a UTC instant (`edtStringToUTC`, anchored at `SHOW_DATE` 04:00Z =
   midnight ET) then formatted into the viewer's chosen tz. Choice persists in

@@ -67,33 +67,49 @@ h1 { font-size: 32px; font-weight: 500; color: #f0ece4; margin-bottom: 8px; disp
     <h1 id="festival-h1"><img src="couchella-logo.svg" alt="Couchella" class="logo-img"> 2026 &mdash; Livestream</h1>
     <div class="sub" id="sub">April 10&ndash;12, 2026</div>
     <div class="festivals">
-      <button class="fbtn active" id="coa-fbtn" onclick="setFestival('coachella')"><img src="couchella-logo.svg" alt="Couchella" class="logo-img"></button>
-      <button class="fbtn" id="sta-fbtn" onclick="setFestival('stagecoach')"><img src="stagecouch-logo.svg" alt="Stagecoach" class="logo-img"></button>
+      <button class="fbtn active" id="coa-fbtn" onclick="setFestival('coachella', true)"><img src="couchella-logo.svg" alt="Couchella" class="logo-img"></button>
+      <button class="fbtn" id="sta-fbtn" onclick="setFestival('stagecoach', true)"><img src="stagecouch-logo.svg" alt="Stagecoach" class="logo-img"></button>
     </div>
     <div class="weekends" id="weekends-row">
-      <button class="wbtn active" id="w1btn" onclick="setWeekend(1)">Weekend 1<span class="wd">Apr 10&ndash;12</span></button>
-      <button class="wbtn" id="w2btn" onclick="setWeekend(2)">Weekend 2<span class="wd">Apr 17&ndash;19</span></button>
+      <button class="wbtn active" id="w1btn" onclick="setWeekend(1, true)">Weekend 1<span class="wd">Apr 10&ndash;12</span></button>
+      <button class="wbtn" id="w2btn" onclick="setWeekend(2, true)">Weekend 2<span class="wd">Apr 17&ndash;19</span></button>
     </div>
     <div class="days">
-      <a class="btn fri" id="fri-btn" href="friday.html">Friday<span class="d">April 10</span></a>
-      <a class="btn sat" id="sat-btn" href="saturday.html">Saturday<span class="d">April 11</span></a>
-      <a class="btn sun" id="sun-btn" href="sunday.html">Sunday<span class="d">April 12</span></a>
+      <a class="btn fri" id="fri-btn" href="friday.html?w=1">Friday<span class="d">April 10</span></a>
+      <a class="btn sat" id="sat-btn" href="saturday.html?w=1">Saturday<span class="d">April 11</span></a>
+      <a class="btn sun" id="sun-btn" href="sunday.html?w=1">Sunday<span class="d">April 12</span></a>
     </div>
   </div>
 </div>
 <script>
 var WEEKS = {
-  1: { fri:['friday.html','April 10'], sat:['saturday.html','April 11'], sun:['sunday.html','April 12'], sub:'April 10\u201312, 2026' },
+  1: { fri:['friday.html?w=1','April 10'], sat:['saturday.html?w=1','April 11'], sun:['sunday.html?w=1','April 12'], sub:'April 10\u201312, 2026' },
   2: { fri:['friday.html?w=2','April 17'], sat:['saturday.html?w=2','April 18'], sun:['sunday.html?w=2','April 19'], sub:'April 17\u201319, 2026' }
 };
+// Date-based defaults. WEEKEND_CUTOVER is mirrored in friday/saturday/sunday.html.
+var WEEKEND_CUTOVER = 20260414, STAGECOACH_CUTOVER = 20260420;
+var PICK_TTL = 12 * 60 * 60 * 1000;  // explicit picks expire so they can't pin a later visit
+function todayNum() { var n = new Date(); return n.getFullYear()*10000 + (n.getMonth()+1)*100 + n.getDate(); }
+function defaultWeekend() { return todayNum() >= WEEKEND_CUTOVER ? 2 : 1; }
+function defaultFestival() { return todayNum() >= STAGECOACH_CUTOVER ? 'stagecoach' : 'coachella'; }
+// Only explicit clicks are saved, each with its own timestamp.
+function savePick(key, val) {
+  try { localStorage.setItem(key, val); localStorage.setItem(key + 'At', String(Date.now())); } catch (e) {}
+}
+function freshPick(key) {
+  try {
+    var at = +localStorage.getItem(key + 'At');
+    return at && Date.now() - at <= PICK_TTL ? localStorage.getItem(key) : null;
+  } catch (e) { return null; }
+}
 var STAGECOACH = {
   fri:['stagecoach-friday.html','April 24'],
   sat:['stagecoach-saturday.html','April 25'],
   sun:['stagecoach-sunday.html','April 26'],
   sub:'April 24\u201326, 2026'
 };
-function setWeekend(n) {
-  localStorage.setItem('weekend', n);
+function setWeekend(n, fromClick) {
+  if (fromClick) { savePick('weekend', n); savePick('festival', 'coachella'); }
   var w = WEEKS[n];
   document.getElementById('w1btn').classList.toggle('active', n === 1);
   document.getElementById('w2btn').classList.toggle('active', n === 2);
@@ -104,8 +120,8 @@ function setWeekend(n) {
   });
   document.getElementById('sub').innerHTML = w.sub;
 }
-function setFestival(f) {
-  localStorage.setItem('festival', f);
+function setFestival(f, fromClick) {
+  if (fromClick) savePick('festival', f);
   document.getElementById('coa-fbtn').classList.toggle('active', f === 'coachella');
   document.getElementById('sta-fbtn').classList.toggle('active', f === 'stagecoach');
   var weekendsRow = document.getElementById('weekends-row');
@@ -124,19 +140,13 @@ function setFestival(f) {
     weekendsRow.style.display = '';
     h1.innerHTML = '<img src="couchella-logo.svg" alt="Couchella" class="logo-img"> 2026 &mdash; Livestream';
     document.title = 'Couchella 2026';
-    var saved = localStorage.getItem('weekend');
-    setWeekend(saved === '2' ? 2 : 1);
+    var saved = freshPick('weekend');
+    setWeekend(saved === '2' ? 2 : saved === '1' ? 1 : defaultWeekend());
   }
 }
 (function() {
-  var savedFest = localStorage.getItem('festival');
-  if (savedFest === 'stagecoach') { setFestival('stagecoach'); return; }
-  var saved = localStorage.getItem('weekend');
-  var w = saved ? parseInt(saved) : (function() {
-    var n = new Date(), d = n.getFullYear()*10000 + (n.getMonth()+1)*100 + n.getDate();
-    return d >= 20260414 ? 2 : 1;
-  })();
-  if (w === 2) setWeekend(2);
+  var fest = freshPick('festival');
+  setFestival(fest === 'stagecoach' || fest === 'coachella' ? fest : defaultFestival());
 })();
 </script>
 </body>

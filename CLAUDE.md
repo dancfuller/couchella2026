@@ -81,5 +81,8 @@ All logic lives in one IIFE per day file. Key pieces:
 - **Commit straight to `main`** and push. Do not open PRs (project workflow).
 - Logos are SVG wordmarks shown white via `filter: invert(1)`; keep that when
   adding logo usages.
+- Keep logo SVGs vector-only. Inkscape traces keep their source bitmap as an
+  embedded `<image>` (hidden or off-canvas) — delete it before committing.
+  `stagecouch-logo.svg` was 694 KB from two such leftovers; it's ~22 KB without.
 - Update this file in the same commit when you change how something works (e.g.
   the triplication strategy, the timezone anchor, or now-playing windows).

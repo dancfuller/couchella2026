@@ -36,6 +36,11 @@ with plain `node`. Nothing here is loaded by the public site.
   committed data. Removals (acts or whole stages) are surfaced as warnings, since
   silently losing data is the failure this tool exists to prevent. It never
   writes files — Copy/Download only.
+  - The paste is **kept** when you switch schedule/weekend (so "paste first, then
+    pick the target" works), but `pastedFor` remembers what it was entered for and
+    a warning names the new target until you edit the paste or reload current data.
+  - "weekend N missing" for a weekend *other* than the target is downgraded to a
+    warning so you can rebuild a file one weekend at a time.
 - **`check-schedules.js`** — runs each data file in a `vm` sandbox with a fake
   `window`, validates, exits 1 on any error.
 

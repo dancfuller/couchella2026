@@ -166,6 +166,8 @@ SCHEDULE:
   $('key').innerHTML = L.KEYS.map(function (k) { return '<option value="' + k + '">' + k + '</option>'; }).join('');
 
   var generated = '';
+  var pastedFor = null;  // target the paste was last edited for; a later switch gets called out
+  function targetId(t) { return t.key + (t.coachella ? ' weekend ' + t.wk : ''); }
   function target() {
     var key = $('key').value, coachella = L.festivalOf(key) === 'coachella';
     return { key: key, wk: coachella ? $('wk').value : '1', coachella: coachella, current: S[key] };
@@ -193,6 +195,9 @@ SCHEDULE:
       $('out-hint').textContent = '';
       return;
     }
+    if (pastedFor && pastedFor !== targetId(t)) {
+      issues.push(li('warn', 'Target changed after pasting (was ' + pastedFor + ') — this paste is now being applied to ' + targetId(t) + '. Edit the paste to confirm.'));
+    }
     var parsed = L.parsePaste(text, { sourceTz: $('tz').value });
     parsed.errors.forEach(function (e) { issues.push(li('error', e)); });
     parsed.notes.forEach(function (n) { issues.push(li('note', n)); });
@@ -202,7 +207,12 @@ SCHEDULE:
 
     var next = t.current ? clone(t.current) : { weekends: {} };
     next.weekends[t.wk] = { showDate: $('showdate').value, stages: merged.stages };
-    var v = L.validateSchedule(t.key, next).filter(function (i) { return i.where.indexOf(' W' + t.wk) !== -1 || i.where === t.key; });
+    var v = L.validateSchedule(t.key, next).filter(function (i) { return i.where.indexOf(' W' + t.wk) !== -1 || i.where === t.key; })
+      .map(function (i) {
+        // Another weekend missing isn't this import's problem: warn, don't block (import it next).
+        var m = i.where === t.key && i.msg.match(/^weekend (\d+) missing$/);
+        return m && m[1] !== t.wk ? { level: 'warn', where: i.where, msg: i.msg + ' — import it separately' } : i;
+      });
     v.forEach(function (i) { issues.push(li(i.level, i.where + ': ' + i.msg)); });
     var nErr = parsed.errors.length + v.filter(function (i) { return i.level === 'error'; }).length + (t.current ? 0 : 1);
     // Diff. Removals are also surfaced as warnings: silently losing data is the main risk.
@@ -258,12 +268,13 @@ SCHEDULE:
 
   ['key', 'wk'].forEach(function (id) { $(id).addEventListener('change', syncTarget); });
   ['tz', 'keep', 'showdate', 'show-same'].forEach(function (id) { $(id).addEventListener('change', render); });
-  $('paste').addEventListener('input', render);
+  $('paste').addEventListener('input', function () { pastedFor = $('paste').value.trim() ? targetId(target()) : null; render(); });
   $('load-current').addEventListener('click', function () {
     var t = target(), cw = t.current && t.current.weekends[t.wk];
     if (!cw) return;
     $('tz').value = 'ET';
     $('paste').value = L.toText(cw.stages);
+    pastedFor = targetId(t);
     render();
   });
   $('copy-out').addEventListener('click', function () { copyText(generated, $('copy-out')); });

@@ -125,6 +125,12 @@ All logic lives in one IIFE per day file. Key pieces:
     must never be clipped by `.col{overflow:hidden}`. Autofit re-runs on resize,
     tz change, and whenever `update()` changes now-playing classes
     (`refitIfLiveChanged`), since bold/bullet styling can wrap names.
+    `autofit()` first runs `fitHeader()` — shrinks `.title` 2px at a time until it
+    is one line (a wrapped title used to eat up to ~240px of grid height) — and
+    `fitClock()` — scales `#clk` down from `CLK_MAX` (98px) to its column width,
+    measured with the widest time "12:59" so AM/PM never clips. Both clear their
+    inline sizes on mobile portrait/landscape, whose CSS sizes apply instead. At
+    769–1200px wide the header controls (`.meta`/`.tz-btn`/`.back`) are compact.
   - Mobile portrait (`.mob-outer`, ≤768px): one stage panel at a time with a
     swipeable tab nav and its own large clock.
   - Mobile landscape (orientation + max-height:500px): a compact "billboard"

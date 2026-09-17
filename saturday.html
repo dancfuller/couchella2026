@@ -24,9 +24,9 @@ body {
   padding-bottom: 14px;
   flex-shrink: 0;
 }
-.title { font-size: 60px; font-weight: 500; color: #f0ece4; }
+.title { font-size: 60px; font-weight: 500; color: #f0ece4; flex: 1 1 auto; min-width: 0; }
 .logo-img { height: 0.72em; vertical-align: middle; filter: invert(1); display: inline-block; position: relative; top: -0.03em; }
-.right { display: flex; align-items: center; gap: 20px; }
+.right { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
 .meta { font-size: 22px; color: #666; }
 .wk-label { white-space: nowrap; }
 .tz-group { display: inline-flex; align-items: center; }
@@ -180,6 +180,13 @@ body {
 .col.fit-7 .col-head { font-size: 16px; }
 /* Last resort: still too tall at the smallest size -> scroll instead of clipping acts */
 .col.fit-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: #3a3a3a transparent; }
+
+/* Narrow desktop: compact header controls so the title keeps more room (fitHeader shrinks the title itself) */
+@media (min-width: 769px) and (max-width: 1200px) {
+  .right { gap: 12px; }
+  .meta, .tz-btn { font-size: 16px; }
+  .back { font-size: 15px; padding: 4px 10px; }
+}
 
 /* ── Mobile ──────────────────────────────────── */
 .mob-outer { display: none; }
@@ -425,9 +432,35 @@ body {
     '<div class="row-grid">'+stages.slice(4).map(renderStage).join('')+clkCol+'</div>';
 
   // ── Autofit desktop columns to vertical space ─────────
+  // Desktop header: shrink the title until it fits on one line (a wrapped title steals grid height).
+  function fitHeader(landscape){
+    var t=document.querySelector('.title');if(!t)return;
+    t.style.fontSize='';
+    if(landscape||window.matchMedia('(max-width: 768px)').matches)return;
+    var fs=parseFloat(getComputedStyle(t).fontSize);
+    while(fs>24&&t.getBoundingClientRect().height>fs*1.6){fs-=2;t.style.fontSize=fs+'px';}
+  }
+  // Desktop clock: scale to its column so AM/PM is never clipped. Measured at the widest time (12:59).
+  var CLK_MAX=98;
+  function fitClock(landscape){
+    var clk=document.getElementById('clk'),h=document.getElementById('clk-h'),m=document.getElementById('clk-m');
+    if(!clk||!h||!m)return;
+    clk.style.fontSize=CLK_MAX+'px';
+    if(landscape||!clk.offsetParent)return;
+    var box=clk.closest('.col'),cs=getComputedStyle(box),oh=h.textContent,om=m.textContent;
+    h.textContent='12';m.textContent='59';
+    for(var i=0;i<3;i++){
+      var avail=box.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),w=clk.getBoundingClientRect().width;
+      if(w<=avail)break;
+      clk.style.fontSize=Math.floor(parseFloat(clk.style.fontSize)*avail/w)+'px';
+    }
+    h.textContent=oh;m.textContent=om;
+  }
   var FIT_MAX=7;
   function autofit(){
     var landscape=window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches;
+    fitHeader(landscape);  // first: header height decides how much room the columns get
+    fitClock(landscape);
     document.querySelectorAll('.grid-wrap .col').forEach(function(col){
       for(var i=1;i<=FIT_MAX;i++)col.classList.remove('fit-'+i);
       col.classList.remove('fit-scroll');
